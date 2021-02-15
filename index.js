@@ -24,14 +24,23 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const boardUrl = "http://localhost:3000/boards"
+
 function fetchBoard( boardId ) {
-    return fetch( `http://localhost:3000/boards/${ boardId }` )
+    return fetch( `${ boardUrl }/${ boardId }` )
+        .then( response => response.json() );
+}
+
+function patchBoard( boardId, config ) {
+    return fetch( `${ boardUrl }/${ boardId }`, config )
         .then( response => response.json() );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const sudokuBoard = document.getElementById( "sudoku-board" );
 
 const allCells = [
     [ ...document.querySelector( '[data-row="0"]' ).getElementsByTagName( "td" ) ],
@@ -79,12 +88,31 @@ function renderBoard( boardData ) {
             }
         }
     }
+    sudokuBoard.dataset.id = boardData.id;
+}
+
+function saveProgress( saveButtonClick ) {
+    const updatedBoardInProgress = allCells.map( row => {
+        return row.map( cell => {
+            const updatedNumber = parseInt( cell.querySelector("input").value );
+            return !updatedNumber ? 0 : updatedNumber;
+        } )
+    } );
+    const progressConfig = {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( { board_in_progress: updatedBoardInProgress } )
+    };
+    patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
 document.addEventListener( "DOMContentLoaded", () => {
     fetchBoard( 1 ).then( renderBoard );
+    ///////////// Handling navbar clicks /////////////
+    document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
+    ///////////// Handling board clicks /////////////
     document.addEventListener( "click", handleDomClick );
-    document.getElementById( "sudoku-board" ).addEventListener( "click", highlightCellPeers );
-    document.getElementById( "sudoku-board" ).addEventListener('input', keepLastDigit)
+    sudokuBoard.addEventListener( "click", highlightCellPeers );
+    sudokuBoard.addEventListener( 'input', keepLastDigit )
 } );
 
