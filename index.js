@@ -51,7 +51,16 @@ function highlightCellPeers( cellClick ) {
     }
 }
 
+function keepLastDigit (cellInput) {
+    let currentValue = cellInput.target.value
+    if (cellInput.data === "e") {
+        return cellInput.target.value = ""
+    }
+    cellInput.target.value = /\d$/.exec(`${currentValue}`)[0]
+}
+
 document.addEventListener( "DOMContentLoaded", () => {
     document.addEventListener( "click", handleDomClick );
     document.getElementById( "sudoku-board" ).addEventListener( "click", highlightCellPeers );
+    document.getElementById( "sudoku-board" ).addEventListener('input', keepLastDigit)
 } );

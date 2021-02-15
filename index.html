@@ -10,109 +10,136 @@
     </head>
 
     <body>
-
-        <table id="sudoku-board">
-            <tr class="row" data-row="0">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="1">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="2">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="3">
-                <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="4">
-                <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="5">
-                <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="6">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="7">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-            <tr class="row" data-row="8">
-                <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
-                <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
-                <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
-            </tr>
-        </table>
-
+        <header>
+            <h1 id="logo"> Fludoku </h1>
+            <section id="player-info"> 
+                <span> Welcole back Josh</span>
+                <span> Fludoku White Belt </span>
+                <span> Points <span id="points"> 10 </span></span>
+            </section>
+        </header>
+        <nav> 
+            <button id="new-game"> New Game </button>
+            <button id="load-game"> Load Game </button>
+            <button id="edit-game"> Change Game Name </button>
+        </nav>
+        <content>
+            <section id="timer-section"> 
+                <table>
+                    <tr>
+                        <td id="timer-text">Timer </td>
+                    </tr>
+                    <tr> 
+                        <td id="timer-value">1:00 </td>
+                    </tr>
+                </table>
+            </section>
+            <table id="sudoku-board">
+                <tr class="row" data-row="0">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="1">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="2">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="3">
+                    <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="4">
+                    <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="5">
+                    <td class="cell"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="6">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="7">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+                <tr class="row" data-row="8">
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="1" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="2" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="3" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="4" min="1" max="9"></input></td>
+                    <td class="cell"><input type="number" class="cell-display" data-column="5" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="6" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="7" min="1" max="9"></input></td>
+                    <td class="cell bold"><input type="number" class="cell-display" data-column="8" min="1" max="9"></input></td>
+                </tr>
+            </table>
+            <section id="game-controls">
+                <button id="solve"> Solve Puzzle </button>
+                <button id="get-hint"> Get Hint </button>
+            </section>
+        </content>
         <script src="index.js"></script>
 
     </body>
