@@ -1,5 +1,7 @@
 #sudoku-board {
     border-collapse: collapse;
+    width: 550px;
+    height: 550px;
 }
 
 .cell {
@@ -38,4 +40,53 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Grid Layout */
+
+body {
+    display: grid;
+    grid-template-rows: 125px 30px 1fr;
+}
+
+header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    color: white;
+    background: black;
+}
+
+#player-info {
+    display: grid;
+    justify-content: end;
+    align-items: center;
+    align-content: center;
+    margin-right: 50px;
+}
+
+#logo {
+    align-self: center;
+    margin-left: 50px;
+    font-size: 3.5rem;
+}
+
+content {
+    display: grid;
+    grid-template-columns: 1fr 9fr;
+    grid-template-rows: 1fr 35px;
+    justify-content: center;
+    justify-items: center;
+}
+
+#timer-section {
+    grid-row: span 2;
+    text-align: center;
+}
+
+#timer-text {
+    font-size: 2rem;
+}
+
+#timer-value {
+    font-size: 1rem;
 }
