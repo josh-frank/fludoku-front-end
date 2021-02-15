@@ -24,6 +24,15 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function fetchBoard( boardId ) {
+    return fetch( `http://localhost:3000/boards/${ boardId }` )
+        .then( response => response.json() );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const allCells = [
     [ ...document.querySelector( '[data-row="0"]' ).getElementsByTagName( "td" ) ],
     [ ...document.querySelector( '[data-row="1"]' ).getElementsByTagName( "td" ) ],
@@ -59,7 +68,21 @@ function keepLastDigit (cellInput) {
     cellInput.target.value = /\d$/.exec(`${currentValue}`)[0]
 }
 
+function renderBoard( boardData ) {
+    for ( const row of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
+        for ( const column of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
+            if ( boardData.board_in_progress[ row ][ column ] ) {
+                const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
+                thisCellDisplay.value = boardData.board_in_progress[ row ][ column ];
+                thisCellDisplay.classList.add( "clue" );
+                thisCellDisplay.disabled = true;
+            }
+        }
+    }
+}
+
 document.addEventListener( "DOMContentLoaded", () => {
+    fetchBoard( 1 ).then( renderBoard );
     document.addEventListener( "click", handleDomClick );
     document.getElementById( "sudoku-board" ).addEventListener( "click", highlightCellPeers );
     document.getElementById( "sudoku-board" ).addEventListener('input', keepLastDigit)
