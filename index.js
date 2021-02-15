@@ -55,3 +55,4 @@ document.addEventListener( "DOMContentLoaded", () => {
     document.addEventListener( "click", handleDomClick );
     document.getElementById( "sudoku-board" ).addEventListener( "click", highlightCellPeers );
 } );
+
