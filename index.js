@@ -57,7 +57,7 @@ function keepLastDigit (cellInput) {
         return cellInput.target.value = ""
     }
     cellInput.target.value = /\d$/.exec(`${currentValue}`)[0]
-}
+} 
 
 document.addEventListener( "DOMContentLoaded", () => {
     document.addEventListener( "click", handleDomClick );
