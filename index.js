@@ -25,6 +25,7 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 ``
 const boardUrl = "http://localhost:3000/boards"
+const userBoardUrl = "http://localhost:3000/user_boards"
 
 function fetchBoard( boardId ) {
     return fetch( `${ boardUrl }/${ boardId }` )
@@ -41,9 +42,21 @@ function postNewBoard( newBoardConfig ) {
         .then( response => response.json() )
 }
 
+function postNewUserBoard( userId, boardId ) {
+    return fetch( userBoardUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify( { user_id: userId, board_id: boardId } )  
+    } )
+}
+
+function patchUserBoard( userBoardConfig ) {}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let currentUserId = 1;
 
 let removedValues = [];
 
@@ -117,22 +130,9 @@ function renderBoard( boardData ) {
     startingBoard = boardData.starting_board;
     solution = boardData.solved_board;
     fillBoard( boardData.board_in_progress );
-    // for ( const row of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
-    //     for ( const column of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
-    //         const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
-    //         clearCell(thisCellDisplay)
-    //         if ( boardData.board_in_progress[ row ][ column ] ) {
-    //             thisCellDisplay.value = boardData.board_in_progress[ row ][ column ];
-    //             if ( boardData.starting_board[ row ][ column ] ) {
-    //                 thisCellDisplay.classList.add( "clue" );
-    //                 thisCellDisplay.disabled = true;
-    //             }
-    //         }
-    //     }
-    // }
 }
 
-function createNewGame(newGameClick) {
+function createNewGame() {
     const holes = 60, boardName = "New Test Board"
     const [removedVals, startingBoard, solvedBoard] = newStartingBoard(holes)
     
@@ -152,11 +152,14 @@ function createNewGame(newGameClick) {
         },
         body: JSON.stringify(newBoardData)
     }
-    postNewBoard(newBoardConfig).then(renderBoard)
+    postNewBoard(newBoardConfig).then( boardData => {
+        renderBoard( boardData );
+        postNewUserBoard( currentUserId, boardData.id );
+    } );
 }
 
 
-function saveProgress( saveButtonClick ) {
+function saveProgress() {
     const updatedBoardInProgress = allCells.map( row => {
         return row.map( cell => {
             const updatedNumber = parseInt( cell.querySelector("input").value );
@@ -171,7 +174,7 @@ function saveProgress( saveButtonClick ) {
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
-function checkBoardProgress ( checkBoardClick ) {
+function checkBoardProgress () {
     for( const removedValue of removedValues ) {
         const thisCell = allCells[ removedValue.rowIndex ][ removedValue.colIndex ];
         if ( thisCell.firstChild.value != removedValue.val && !!thisCell.firstChild.value ) {
@@ -180,8 +183,17 @@ function checkBoardProgress ( checkBoardClick ) {
     }
 }
 
-function clearGuesses( clearGuessesClick ) {
+function clearGuesses() {
     fillBoard( startingBoard );
+}
+
+function solvePuzzle() {
+    for( const removedValue of removedValues ) {
+        const thisCell = allCells[ removedValue.rowIndex ][ removedValue.colIndex ];
+        thisCell.firstChild.value = removedValue.val;
+        thisCell.firstChild.classList.add( "solution" );
+        thisCell.firstChild.disabled = true;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,6 +205,8 @@ document.addEventListener( "DOMContentLoaded", () => {
     ///////////// Handling navbar clicks /////////////
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
     document.getElementById( "new-game" ).addEventListener( "click", createNewGame );
+    ///////////// Handling controls clicks /////////////
+    document.getElementById( "solve" ).addEventListener( "click", solvePuzzle);
     document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
     document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);
     ///////////// Handling board clicks /////////////

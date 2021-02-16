@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'digital-7_monomono';
-    src: url('digital-7_mono-webfont.woff2') format('woff2'),
-         url('digital-7_mono-webfont.woff') format('woff');
+    src: url( 'digital-7_mono-webfont.woff2' ) format( 'woff2' ),
+         url( 'digital-7_mono-webfont.woff' ) format( 'woff' );
     font-weight: normal;
     font-style: normal;
 }
@@ -44,6 +44,12 @@
     font-weight: bold;
     font-style: oblique;
     color: red;
+}
+
+.solution {
+    font-weight: bold;
+    font-style: oblique;
+    color: green;
 }
 
 input::-webkit-outer-spin-button,
@@ -106,6 +112,6 @@ content {
     color: white;
     padding: 0.5rem;
     font-family: 'digital-7_monomono';
-    src: url('digital-7_mono-webfont.woff2') format('woff2');
+    src: url( 'digital-7_mono-webfont.woff2 ') format( 'woff2' );
     font-size: xx-large;
 }
