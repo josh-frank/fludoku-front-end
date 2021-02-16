@@ -165,3 +165,4 @@ document.addEventListener( "DOMContentLoaded", () => {
     sudokuBoard.addEventListener( "click", highlightCellPeers );
     sudokuBoard.addEventListener( 'input', keepLastDigit )
 } );
+
