@@ -45,6 +45,11 @@ function postNewBoard( newBoardConfig ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+let removedValues = [];
+
+let startingBoard = [];
+let solution = [];
+
 const sudokuBoard = document.getElementById( "sudoku-board" );
 
 const allCells = [
@@ -75,6 +80,7 @@ function highlightCellPeers( cellClick ) {
 }
 
 function keepLastDigit (cellInput) {
+    cellInput.target.classList.remove( "incorrect" );
     let currentValue = cellInput.target.value
     if (cellInput.target.value === "") return
     if (cellInput.data === "e") {
@@ -89,22 +95,41 @@ function clearCell (cellNode) {
     cellNode.disabled = false
 }
 
-function renderBoard( boardData ) {
-
+function fillBoard( boardArray ) {
     for ( const row of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
         for ( const column of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
             const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
             clearCell(thisCellDisplay)
-            if ( boardData.board_in_progress[ row ][ column ] ) {
-                thisCellDisplay.value = boardData.board_in_progress[ row ][ column ];
-                if ( boardData.starting_board[ row ][ column ] ) {
+            if ( boardArray[ row ][ column ] ) {
+                thisCellDisplay.value = boardArray[ row ][ column ];
+                if ( startingBoard[ row ][ column ] ) {
                     thisCellDisplay.classList.add( "clue" );
                     thisCellDisplay.disabled = true;
                 }
             }
         }
     }
+}
+
+function renderBoard( boardData ) {
     sudokuBoard.dataset.id = boardData.id;
+    removedValues = boardData.removed_values;
+    startingBoard = boardData.starting_board;
+    solution = boardData.solved_board;
+    fillBoard( boardData.board_in_progress );
+    // for ( const row of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
+    //     for ( const column of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
+    //         const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
+    //         clearCell(thisCellDisplay)
+    //         if ( boardData.board_in_progress[ row ][ column ] ) {
+    //             thisCellDisplay.value = boardData.board_in_progress[ row ][ column ];
+    //             if ( boardData.starting_board[ row ][ column ] ) {
+    //                 thisCellDisplay.classList.add( "clue" );
+    //                 thisCellDisplay.disabled = true;
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 function createNewGame(newGameClick) {
@@ -146,8 +171,17 @@ function saveProgress( saveButtonClick ) {
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
-function checkBoardProgress (checkBoardClick) {
-    console.log( "clicked" )
+function checkBoardProgress ( checkBoardClick ) {
+    for( const removedValue of removedValues ) {
+        const thisCell = allCells[ removedValue.rowIndex ][ removedValue.colIndex ];
+        if ( thisCell.firstChild.value != removedValue.val && !!thisCell.firstChild.value ) {
+            thisCell.firstChild.classList.add( "incorrect" );
+        }
+    }
+}
+
+function clearGuesses( clearGuessesClick ) {
+    fillBoard( startingBoard );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,6 +194,7 @@ document.addEventListener( "DOMContentLoaded", () => {
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
     document.getElementById( "new-game" ).addEventListener( "click", createNewGame );
     document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
+    document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);
     ///////////// Handling board clicks /////////////
     document.addEventListener( "click", handleDomClick );
     sudokuBoard.addEventListener( "click", highlightCellPeers );
