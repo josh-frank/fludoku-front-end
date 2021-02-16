@@ -36,6 +36,11 @@ function patchBoard( boardId, config ) {
         .then( response => response.json() );
 }
 
+function postNewBoard( newBoardConfig ) {
+    return fetch( boardUrl, newBoardConfig )
+        .then( response => response.json() )
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,25 +76,60 @@ function highlightCellPeers( cellClick ) {
 
 function keepLastDigit (cellInput) {
     let currentValue = cellInput.target.value
+    if (cellInput.target.value === "") return
     if (cellInput.data === "e") {
         return cellInput.target.value = ""
     }
     cellInput.target.value = /\d$/.exec(`${currentValue}`)[0]
 }
 
+function clearCell (cellNode) {
+    cellNode.value = ""
+    cellNode.classList = "cell-display"
+    cellNode.disabled = false
+}
+
 function renderBoard( boardData ) {
+
     for ( const row of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
         for ( const column of [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ] ) {
+            const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
+            clearCell(thisCellDisplay)
             if ( boardData.board_in_progress[ row ][ column ] ) {
-                const thisCellDisplay = allCells[ row ][ column ].querySelector( "input" );
                 thisCellDisplay.value = boardData.board_in_progress[ row ][ column ];
-                thisCellDisplay.classList.add( "clue" );
-                thisCellDisplay.disabled = true;
+                if ( boardData.starting_board[ row ][ column ] ) {
+                    thisCellDisplay.classList.add( "clue" );
+                    thisCellDisplay.disabled = true;
+                }
             }
         }
     }
     sudokuBoard.dataset.id = boardData.id;
 }
+
+function createNewGame(newGameClick) {
+    const holes = 60, boardName = "New Test Board"
+    const [removedVals, startingBoard, solvedBoard] = newStartingBoard(holes)
+    
+    const newBoardData = {
+        board_name: boardName,
+        starting_board: startingBoard,
+        board_in_progress: startingBoard,
+        solved_board: solvedBoard,
+        removed_values: removedVals,
+        difficulty: holes
+    }
+
+    const newBoardConfig = {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify(newBoardData)
+    }
+    postNewBoard(newBoardConfig).then(renderBoard)
+}
+
 
 function saveProgress( saveButtonClick ) {
     const updatedBoardInProgress = allCells.map( row => {
@@ -106,10 +146,20 @@ function saveProgress( saveButtonClick ) {
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
+// function checkBoardProgress (checkBoardClick) {
+
+// }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 document.addEventListener( "DOMContentLoaded", () => {
-    fetchBoard( 1 ).then( renderBoard );
+    fetchBoard( 4 ).then( renderBoard );
     ///////////// Handling navbar clicks /////////////
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
+    document.getElementById( "new-game" ).addEventListener( "click", createNewGame );
+    document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
     ///////////// Handling board clicks /////////////
     document.addEventListener( "click", handleDomClick );
     sudokuBoard.addEventListener( "click", highlightCellPeers );
