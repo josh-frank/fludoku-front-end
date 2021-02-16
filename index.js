@@ -26,6 +26,13 @@ function peers( puzzle, row, column ) {
 ``
 const boardUrl = "http://localhost:3000/boards"
 const userBoardUrl = "http://localhost:3000/user_boards"
+const userUrl = "http://localhost:3000/users"
+const loginUrl = "http://localhost:3000/login"
+
+function fetchUserInfoByName(usersName) {
+    return fetch( `${ loginUrl }?name=${ usersName }` )
+    .then( response => response.json() );
+}
 
 function fetchBoard( boardId ) {
     return fetch( `${ boardUrl }/${ boardId }` )
@@ -76,6 +83,10 @@ const allCells = [
     [ ...document.querySelector( '[data-row="7"]' ).getElementsByTagName( "td" ) ],
     [ ...document.querySelector( '[data-row="8"]' ).getElementsByTagName( "td" ) ],
 ]
+
+const modalBackground = document.querySelector('#modal-background')
+const modalContainer = document.querySelector('#modal-container')
+
 
 function clearHighlight() {
     allCells.flat().forEach( cell => cell.classList.remove( "highlight" ) );
@@ -196,12 +207,77 @@ function solvePuzzle() {
     }
 }
 
+function renderLogin () {
+    const loginForm = document.createElement( 'form' )
+    loginForm.id = "login-form"
+    const usersName = document.createElement( 'input' )
+    usersName.id = "name-input"
+    usersName.name = "name"
+    usersName.placeholder = "Enter Your Name"
+    usersName.required = true
+    const loginButton = document.createElement( 'input' )
+    loginButton.type = "submit"
+    loginButton.textContent = "Login"
+
+    const loginTitle = document.createElement('h1')
+    loginTitle.textContent = "What's your name?"
+    loginTitle.className = "login-title"
+
+    loginForm.append(usersName, loginButton)
+    modalContainer.append( loginTitle, loginForm )
+}
+
+function logUserIn (formSubmitEvent) {
+    formSubmitEvent.preventDefault()
+    const usersName = formSubmitEvent.target.name.value
+    fetchUserInfoByName( usersName ).then( userData => {
+        formSubmitEvent.target.reset()
+        currentUserId = userData.id
+        renderUserBoards( userData ) 
+        document.getElementById('login-form').classList.toggle( 'hidden' )
+    })
+}
+
+function renderUserBoards (userData) {
+    const listOfBoards = document.createElement("ul")
+    listOfBoards.id = "users-boards-list"
+    const newGameButton = document.createElement('button')
+    newGameButton.id = 'modal-new-game'
+    newGameButton.textContent = "Start a New Game!"
+    
+    if (!userData.user_boards.length) {
+        const newGamePrompt = document.createElement('p')
+        newGamePrompt.textContent = "You have no recent games. Start one now!"
+        modalContainer.append(newGamePrompt)
+    }
+
+    for (const userBoard of userData.user_boards) {
+        const thisBoard = document.createElement('li')
+        thisBoard.className = "user-board"
+        thisBoard.dataset.userBoardId = userBoard.id
+        thisBoard.dataset.boardId = userBoard.board_id
+        thisBoard.textContent = `${userBoard.name} - Difficulty: ${userBoard.difficulty}`
+        listOfBoards.append(thisBoard)
+    }
+    modalContainer.append(listOfBoards, newGameButton)
+}
+
+function handleFormSubmit ( formSubmitEvent ) {
+    switch ( true ) {
+        case ( formSubmitEvent.target.id === "login-form"):
+            logUserIn(formSubmitEvent)
+            break
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.addEventListener( "DOMContentLoaded", () => {
-    fetchBoard( 1 ).then( renderBoard );
+    // fetchBoard( 1 ).then( renderBoard );
+    ///////////// Handling board clicks /////////////
+    modalContainer.addEventListener('submit', handleFormSubmit)
     ///////////// Handling navbar clicks /////////////
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
     document.getElementById( "new-game" ).addEventListener( "click", createNewGame );
@@ -213,4 +289,18 @@ document.addEventListener( "DOMContentLoaded", () => {
     document.addEventListener( "click", handleDomClick );
     sudokuBoard.addEventListener( "click", highlightCellPeers );
     sudokuBoard.addEventListener( 'input', keepLastDigit )
+    renderLogin()
 } );
+
+/*
+
+Login Screen
+- Type in User's Name
+- Query Server to FInd user by name
+- Server responds with Users Data
+
+- UserData:
+    - Set current user
+    - populate "Load Screen" with UserBoards
+
+*/
