@@ -81,7 +81,7 @@ function keepLastDigit (cellInput) {
         return cellInput.target.value = ""
     }
     cellInput.target.value = /\d$/.exec(`${currentValue}`)[0]
-}
+} 
 
 function clearCell (cellNode) {
     cellNode.value = ""
