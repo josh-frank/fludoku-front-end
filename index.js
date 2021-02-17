@@ -51,9 +51,9 @@ function postNewBoard( newBoardConfig ) {
 
 function postNewUserBoard( userId, boardId ) {
     return fetch( userBoardUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify( { user_id: userId, board_id: boardId } )  
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( { user_id: userId, board_id: boardId } )  
     } )
 }
 
@@ -143,8 +143,10 @@ function renderBoard( boardData ) {
     fillBoard( boardData.board_in_progress );
 }
 
-function createNewGame() {
-    const holes = 60, boardName = "New Test Board"
+function createNewGame(newGameSubmit) {
+    newGameSubmit.preventDefault()
+    const newGameForm = newGameSubmit.target
+    const holes = parseInt(newGameForm.difficulty.value), boardName = newGameForm.board_name.value
     const [removedVals, startingBoard, solvedBoard] = newStartingBoard(holes)
     
     const newBoardData = {
@@ -163,10 +165,14 @@ function createNewGame() {
         },
         body: JSON.stringify(newBoardData)
     }
-    postNewBoard(newBoardConfig).then( boardData => {
+    postNewBoard( newBoardConfig ).then( boardData => {
         renderBoard( boardData );
-        postNewUserBoard( currentUserId, boardData.id );
+        postNewUserBoard( currentUserId, boardData.id )
+
     } );
+    newGameForm.reset()
+    modalContainer.classList.toggle( 'hidden' )
+    modalBackground.classList.toggle( 'hidden' )
 }
 
 
@@ -223,8 +229,8 @@ function renderLogin () {
     loginTitle.textContent = "What's your name?"
     loginTitle.className = "login-title"
 
-    loginForm.append(usersName, loginButton)
-    modalContainer.append( loginTitle, loginForm )
+    loginForm.append(loginTitle, usersName, loginButton)
+    modalContainer.append( loginForm )
 }
 
 function logUserIn (formSubmitEvent) {
@@ -241,9 +247,36 @@ function logUserIn (formSubmitEvent) {
 function renderUserBoards (userData) {
     const listOfBoards = document.createElement("ul")
     listOfBoards.id = "users-boards-list"
-    const newGameButton = document.createElement('button')
+    const newGameForm = document.createElement('form')
+    newGameForm.id = 'new-game-form'
+
+    const newGameName = document.createElement('input')
+    newGameName.name = "board_name"
+    newGameName.placeholder = "Enter New Game Name"
+    newGameName.required = true
+
+    const newGameDifficultyLabel = document.createElement('label')
+    newGameDifficultyLabel.name = 'difficulty'
+    newGameDifficultyLabel.textContent = 'Select the number of empty spaces to generate.'
+
+    
+    const newGameDifficulty = document.createElement('input')
+    newGameDifficulty.type = 'range'
+    newGameDifficulty.name = "difficulty"
+    newGameDifficulty.min = 10
+    newGameDifficulty.max = 60
+    newGameDifficulty.value = 40
+    
+    const newGameDifficultyValue = document.createElement('span')
+    newGameDifficultyValue.textContent = 'Holes: 40'
+    newGameDifficulty.oninput = function(){ newGameDifficultyValue.textContent = `Holes: ${newGameDifficulty.value}`}
+
+    const newGameButton = document.createElement('input')
+    newGameButton.type = "submit"
     newGameButton.id = 'modal-new-game'
     newGameButton.textContent = "Start a New Game!"
+
+    newGameForm.append(newGameName, newGameDifficultyLabel, newGameDifficulty, newGameDifficultyValue, newGameButton)
     
     if (!userData.user_boards.length) {
         const newGamePrompt = document.createElement('p')
@@ -256,10 +289,10 @@ function renderUserBoards (userData) {
         thisBoard.className = "user-board"
         thisBoard.dataset.userBoardId = userBoard.id
         thisBoard.dataset.boardId = userBoard.board_id
-        thisBoard.textContent = `${userBoard.name} - Difficulty: ${userBoard.difficulty}`
+        thisBoard.textContent = `${userBoard.board_name} - Difficulty: ${userBoard.difficulty}`
         listOfBoards.append(thisBoard)
     }
-    modalContainer.append(listOfBoards, newGameButton)
+    modalContainer.append(listOfBoards, newGameForm)
 }
 
 function handleFormSubmit ( formSubmitEvent ) {
@@ -267,8 +300,13 @@ function handleFormSubmit ( formSubmitEvent ) {
         case ( formSubmitEvent.target.id === "login-form"):
             logUserIn(formSubmitEvent)
             break
+        case ( formSubmitEvent.target.id === 'new-game-form'):
+            createNewGame(formSubmitEvent)
+            break
     }
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
