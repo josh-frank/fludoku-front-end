@@ -66,8 +66,10 @@ function postNewUserBoard( userId, boardId ) {
     } )
 }
 
-function patchUserBoard( userBoardConfig ) {}
-
+function patchUserBoard( userBoardID, userBoardConfig ) {
+    return fetch( `${userBoardUrl}/${userBoardID}`, userBoardConfig)
+        .then(response => response.json() ) 
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,8 +77,8 @@ function patchUserBoard( userBoardConfig ) {}
 let currentUserId = 1;
 
 let removedValues = [];
-
 let startingBoard = [];
+let boardInProgress = []
 let solution = [];
 
 const sudokuBoard = document.getElementById( "sudoku-board" );
@@ -157,6 +159,7 @@ function renderBoard( boardData ) {
     removedValues = boardData.removed_values;
     startingBoard = boardData.starting_board;
     solution = boardData.solved_board;
+    boardInProgress = boardData.board_in_progress
     fillBoard( boardData.board_in_progress );
 }
 
@@ -241,6 +244,22 @@ function changeBoardName( changeNameFormSubmission ) {
 }
 
 function solvePuzzle() {
+    const userBoardId = sudokuBoard.dataset.userBoardId
+    const patchUserBoardConfig = {
+        method: "PATCH",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            solved: true,
+            failed: true
+        })
+    }
+
+    patchUserBoard(userBoardId, patchUserBoardConfig).then( () => {
+        renderSolution()
+    })
+}
+
+function renderSolution () {
     for( const removedValue of removedValues ) {
         const thisCell = allCells[ removedValue.rowIndex ][ removedValue.colIndex ];
         thisCell.firstChild.value = removedValue.val;
@@ -325,6 +344,8 @@ function renderUserBoards (userData) {
         thisBoard.className = "user-board"
         thisBoard.dataset.userBoardId = userBoard.id
         thisBoard.dataset.boardId = userBoard.board_id
+        thisBoard.dataset.solved = userBoard.solved
+        thisBoard.dataset.failed = userBoard.failed
         thisBoard.textContent = `${userBoard.board_name} - Difficulty: ${userBoard.difficulty}`
         const loadThisBoardButton = document.createElement( "button" );
         loadThisBoardButton.textContent = "Load"
@@ -351,14 +372,19 @@ function handleFormSubmit ( formSubmitEvent ) {
 
 function handleModalClick( modalClickEvent ) {
     const clickTarget = modalClickEvent.target;
+    const thisUserBoard = clickTarget.closest( "li" )
     switch ( true ) {
         case ( clickTarget.classList.contains( "load-button" ) ):
-            fetchBoard( parseInt( clickTarget.closest( "li" ).dataset.boardId ) ).then( renderBoard );
+            fetchBoard( parseInt( thisUserBoard.dataset.boardId ) ).then( boardData => {
+                sudokuBoard.dataset.userBoardId = thisUserBoard.dataset.userBoardId
+                renderBoard(boardData) 
+                if (thisUserBoard.dataset.failed === "true") renderSolution()
+            });
             toggleModalContainer();
             break;
         case ( clickTarget.classList.contains( "delete-button" ) ):
-            deleteBoard( parseInt( clickTarget.closest( "li" ).dataset.boardId ) );
-            clickTarget.closest( "li" ).remove();
+            deleteBoard( parseInt( thisUserBoard.dataset.boardId ) );
+            thisUserBoard.remove();
             break;
     }
 }
