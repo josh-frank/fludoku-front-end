@@ -389,14 +389,8 @@ document.addEventListener( "DOMContentLoaded", () => {
 } );
 
 /*
-
-Login Screen
-- Type in User's Name
-- Query Server to FInd user by name
-- Server responds with Users Data
-
-- UserData:
-    - Set current user
-    - populate "Load Screen" with UserBoards
-
+ToDo 2/17
+- incorporate patch request into solve puzzle button
+- add functionality to hint button
+- styling and sorting renderUserBoards by status/date
 */
