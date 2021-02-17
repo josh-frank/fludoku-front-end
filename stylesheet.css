@@ -40,6 +40,12 @@
     color: blue;
 }
 
+.hint {
+    font-weight: bold;
+    font-style: oblique;
+    color: rgb(255, 166, 0);
+}
+
 .incorrect {
     font-weight: bold;
     font-style: oblique;

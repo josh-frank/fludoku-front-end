@@ -218,6 +218,7 @@ function saveProgress() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( { board_in_progress: updatedBoardInProgress } )
     };
+    console.log('in saveProgress')
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
@@ -231,6 +232,7 @@ function checkBoardProgress () {
 }
 
 function clearGuesses() {
+    if ( sudokuBoard.dataset.solved === "true" ) return
     fillBoard( startingBoard );
 }
 
@@ -243,7 +245,7 @@ function changeBoardName( changeNameFormSubmission ) {
     } ).then( toggleChangeNameForm );
 }
 
-function solvePuzzle() {
+function markPuzzleAsSolved() {
     const userBoardId = sudokuBoard.dataset.userBoardId
     const patchUserBoardConfig = {
         method: "PATCH",
@@ -254,9 +256,9 @@ function solvePuzzle() {
         })
     }
 
-    patchUserBoard(userBoardId, patchUserBoardConfig).then( () => {
-        renderSolution()
-    })
+    return patchUserBoard(userBoardId, patchUserBoardConfig)//.then( () => {
+    //     // renderSolution()
+    // })
 }
 
 function renderSolution () {
@@ -265,6 +267,7 @@ function renderSolution () {
         thisCell.firstChild.value = removedValue.val;
         thisCell.firstChild.classList.add( "solution" );
         thisCell.firstChild.disabled = true;
+        sudokuBoard.dataset.solved = true
     }
 }
 
@@ -359,6 +362,23 @@ function renderUserBoards (userData) {
     modalContainer.append(listOfBoards, newGameForm)
 }
 
+function getHint () {
+    if ( sudokuBoard.dataset.solved === "true" ) return
+    let valueFound = false
+    let randomIndex, randomRow, randomColumn
+    while (!valueFound) {
+        randomIndex = Math.floor(Math.random() * removedValues.length)
+        randomRow = removedValues[randomIndex].rowIndex
+        randomColumn = removedValues[randomIndex].colIndex
+        valueFound = !allCells[randomRow][randomColumn].firstChild.value
+    }
+        let value = removedValues[randomIndex].val
+        if (allCells[randomRow][randomColumn].firstChild.value) getHint()
+        allCells[randomRow][randomColumn].firstChild.value = value
+        allCells[randomRow][randomColumn].firstChild.classList.add('hint')
+        saveProgress()
+}
+
 function handleFormSubmit ( formSubmitEvent ) {
     switch ( true ) {
         case ( formSubmitEvent.target.id === "login-form"):
@@ -377,6 +397,7 @@ function handleModalClick( modalClickEvent ) {
         case ( clickTarget.classList.contains( "load-button" ) ):
             fetchBoard( parseInt( thisUserBoard.dataset.boardId ) ).then( boardData => {
                 sudokuBoard.dataset.userBoardId = thisUserBoard.dataset.userBoardId
+                sudokuBoard.dataset.solved = thisUserBoard.dataset.solved
                 renderBoard(boardData) 
                 if (thisUserBoard.dataset.failed === "true") renderSolution()
             });
@@ -404,7 +425,8 @@ document.addEventListener( "DOMContentLoaded", () => {
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
     ///////////// Handling controls clicks /////////////
     document.getElementById( "change-board-name-form" ).addEventListener( "submit", changeBoardName );
-    document.getElementById( "solve" ).addEventListener( "click", solvePuzzle);
+    document.getElementById( "solve" ).addEventListener( "click", () => { markPuzzleAsSolved().then( renderSolution ) });
+    document.getElementById( "get-hint" ).addEventListener( "click", getHint);
     document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
     document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);
     ///////////// Handling board clicks /////////////
