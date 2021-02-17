@@ -153,6 +153,7 @@
   ]
   
   let startTime
+  let counter
   
   const numArray = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   
@@ -229,13 +230,15 @@
   --------------------------------------------------------------------------------------------*/
   
   const fillPuzzle = startingBoard => {
+
     const emptyCell = nextEmptyCell(startingBoard)
     if (!emptyCell) { // If there are no more zeros, the board is finished, return it
       return startingBoard
     }
-  
     // Shuffled [0 - 9 ] array fills board randomly each pass
     for (num of shuffle(numArray) ) {   
+      counter++
+      if ( counter > 20_000_000 ) throw new Error ("Recursion Timeout")
       if ( safeToPlace( startingBoard, emptyCell, num) ) {
         startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num // If safe to place number, place it
         if ( fillPuzzle(startingBoard) ) { // Recursively call the fill function to place num in next empty cell
@@ -246,10 +249,10 @@
       }
     }
     return false // If unable to place any number, return false, which triggers previous round to go to next num
+
   }
   
   const newSolvedBoard = _ => {
-    startTime = new Date
     const newBoard = BLANK_BOARD.map(row => row.slice() ) // Create an unaffiliated clone of a fresh board
     fillPuzzle(newBoard) // Populate the board using backtracking algorithm
     return newBoard
@@ -284,14 +287,22 @@
   }
   
   function newStartingBoard  (holes) {
-    startTime = new Date // Timer to see render times
-    let solvedBoard = newSolvedBoard()  // Generate a new populated board
-  
-    // Clone the populated board and poke holes in it. Stored the removed values for clues
-    let [removedVals, startingBoard] = pokeHoles( solvedBoard.map ( row => row.slice() ), holes)
-  
-    console.log(`RunTime: ${new Date - startTime}`) //Timer to see render time
-    return [removedVals, startingBoard, solvedBoard]
+    try {
+      startTime = new Date // Timer to see render times
+      counter = 0
+      let solvedBoard = newSolvedBoard()  // Generate a new populated board
+    
+      // Clone the populated board and poke holes in it. Stored the removed values for clues
+      let [removedVals, startingBoard] = pokeHoles( solvedBoard.map ( row => row.slice() ), holes)
+    
+      console.log(`RunTime: ${new Date - startTime}`) //Timer to see render time
+      console.log(counter)
+      return [removedVals, startingBoard, solvedBoard]
+    } catch (error) {
+      console.log(`Stopped after: ${(new Date - startTime)} milliseconds`)
+      // console.log(error)
+      return newStartingBoard(holes)
+    }
   }
   
   function HundredGames() {
