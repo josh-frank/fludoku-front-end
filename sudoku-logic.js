@@ -10,7 +10,7 @@ const BLANK_BOARD = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
-// let startTime
+// let startTime 
 let counter
 
 const numArray = [1, 2, 3, 4, 5, 6, 7, 8, 9]
