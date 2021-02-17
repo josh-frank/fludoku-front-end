@@ -23,7 +23,7 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-``
+
 const boardUrl = "http://localhost:3000/boards"
 const userBoardUrl = "http://localhost:3000/user_boards"
 const userUrl = "http://localhost:3000/users"
@@ -34,6 +34,11 @@ function fetchUserInfoByName(usersName) {
     .then( response => response.json() );
 }
 
+function fetchUserInfoById( userId ) {
+    return fetch( `${ userUrl }/${ userId }` )
+    .then( response => response.json() );
+}
+
 function fetchBoard( boardId ) {
     return fetch( `${ boardUrl }/${ boardId }` )
         .then( response => response.json() );
@@ -41,7 +46,11 @@ function fetchBoard( boardId ) {
 
 function patchBoard( boardId, config ) {
     return fetch( `${ boardUrl }/${ boardId }`, config )
-        .then( response => response.json() );
+    .then( response => response.json() );
+}
+
+function deleteBoard( boardId ) {
+    return fetch( `${ boardUrl }/${ boardId }`, { method: "DELETE" } );
 }
 
 function postNewBoard( newBoardConfig ) {
@@ -84,9 +93,16 @@ const allCells = [
     [ ...document.querySelector( '[data-row="8"]' ).getElementsByTagName( "td" ) ],
 ]
 
-const modalBackground = document.querySelector('#modal-background')
-const modalContainer = document.querySelector('#modal-container')
+const modalBackground = document.querySelector('#modal-background');
+const modalContainer = document.querySelector('#modal-container');
 
+const boardNameDisplay = document.getElementById( "board-name" );
+const changeBoardNameButton = document.getElementById( "change-board-name-button" );
+
+function toggleModalContainer() {
+    modalContainer.classList.toggle( 'hidden' );
+    modalBackground.classList.toggle( 'hidden' );
+}
 
 function clearHighlight() {
     allCells.flat().forEach( cell => cell.classList.remove( "highlight" ) );
@@ -136,6 +152,7 @@ function fillBoard( boardArray ) {
 }
 
 function renderBoard( boardData ) {
+    document.getElementById( "board-name" ).value = boardData.board_name;
     sudokuBoard.dataset.id = boardData.id;
     removedValues = boardData.removed_values;
     startingBoard = boardData.starting_board;
@@ -171,10 +188,20 @@ function createNewGame(newGameSubmit) {
 
     } );
     newGameForm.reset()
-    modalContainer.classList.toggle( 'hidden' )
-    modalBackground.classList.toggle( 'hidden' )
+    toggleModalContainer();
 }
 
+function openLoadWindow() {
+    toggleModalContainer();
+    modalContainer.querySelector( "ul#users-boards-list" ).remove();
+    modalContainer.querySelector( "form#new-game-form" ).remove();
+    fetchUserInfoById( currentUserId ).then( renderUserBoards );
+}
+
+function toggleChangeNameForm() {
+    boardNameDisplay.disabled = boardNameDisplay.disabled ? false : true;
+    changeBoardNameButton.classList.toggle( "hidden" );
+}
 
 function saveProgress() {
     const updatedBoardInProgress = allCells.map( row => {
@@ -202,6 +229,15 @@ function checkBoardProgress () {
 
 function clearGuesses() {
     fillBoard( startingBoard );
+}
+
+function changeBoardName( changeNameFormSubmission ) {
+    changeNameFormSubmission.preventDefault();
+    patchBoard( parseInt( sudokuBoard.dataset.id ), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( { board_name: boardNameDisplay.value } )
+    } ).then( toggleChangeNameForm );
 }
 
 function solvePuzzle() {
@@ -278,19 +314,26 @@ function renderUserBoards (userData) {
 
     newGameForm.append(newGameName, newGameDifficultyLabel, newGameDifficulty, newGameDifficultyValue, newGameButton)
     
-    if (!userData.user_boards.length) {
+    if ( !userData.user_boards.length ) {
         const newGamePrompt = document.createElement('p')
         newGamePrompt.textContent = "You have no recent games. Start one now!"
         modalContainer.append(newGamePrompt)
     }
 
-    for (const userBoard of userData.user_boards) {
+    for ( const userBoard of userData.user_boards ) {
         const thisBoard = document.createElement('li')
         thisBoard.className = "user-board"
         thisBoard.dataset.userBoardId = userBoard.id
         thisBoard.dataset.boardId = userBoard.board_id
         thisBoard.textContent = `${userBoard.board_name} - Difficulty: ${userBoard.difficulty}`
-        listOfBoards.append(thisBoard)
+        const loadThisBoardButton = document.createElement( "button" );
+        loadThisBoardButton.textContent = "Load"
+        loadThisBoardButton.classList.add( "load-button" )
+        const deleteThisBoardButton = document.createElement( "button" );
+        deleteThisBoardButton.textContent = "Delete"
+        deleteThisBoardButton.classList.add( "delete-button" )
+        thisBoard.append( loadThisBoardButton, deleteThisBoardButton );
+        listOfBoards.append( thisBoard )
     }
     modalContainer.append(listOfBoards, newGameForm)
 }
@@ -306,7 +349,19 @@ function handleFormSubmit ( formSubmitEvent ) {
     }
 }
 
-
+function handleModalClick( modalClickEvent ) {
+    const clickTarget = modalClickEvent.target;
+    switch ( true ) {
+        case ( clickTarget.classList.contains( "load-button" ) ):
+            fetchBoard( parseInt( clickTarget.closest( "li" ).dataset.boardId ) ).then( renderBoard );
+            toggleModalContainer();
+            break;
+        case ( clickTarget.classList.contains( "delete-button" ) ):
+            deleteBoard( parseInt( clickTarget.closest( "li" ).dataset.boardId ) );
+            clickTarget.closest( "li" ).remove();
+            break;
+    }
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -316,10 +371,13 @@ document.addEventListener( "DOMContentLoaded", () => {
     // fetchBoard( 1 ).then( renderBoard );
     ///////////// Handling board clicks /////////////
     modalContainer.addEventListener('submit', handleFormSubmit)
+    modalContainer.addEventListener('click', handleModalClick)
     ///////////// Handling navbar clicks /////////////
+    document.getElementById( "load-game" ).addEventListener( "click", openLoadWindow );
+    document.getElementById( "edit-game" ).addEventListener( "click", toggleChangeNameForm );
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
-    document.getElementById( "new-game" ).addEventListener( "click", createNewGame );
     ///////////// Handling controls clicks /////////////
+    document.getElementById( "change-board-name-form" ).addEventListener( "submit", changeBoardName );
     document.getElementById( "solve" ).addEventListener( "click", solvePuzzle);
     document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
     document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);

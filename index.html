@@ -23,8 +23,7 @@
             </section>
         </header>
         <nav> 
-            <button id="new-game"> New Game </button>
-            <button id="load-game"> Load Game </button>
+            <button id="load-game"> Load or Create Game </button>
             <button id="edit-game"> Change Game Name </button>
             <button id="save-game"> Save Progress </button>
         </nav>
@@ -39,6 +38,10 @@
                     </tr>
                 </table>
             </section>
+            <form id="change-board-name-form">
+                <input id="board-name" disabled="true"></input>
+                <input type="submit" name="change-board-name-button" id="change-board-name-button" class="hidden"></input>
+            </form>
             <table id="sudoku-board">
                 <tr class="row" data-row="0">
                     <td class="cell bold"><input type="number" class="cell-display" data-column="0" min="1" max="9"></input></td>
