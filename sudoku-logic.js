@@ -30,12 +30,11 @@ function shuffle( array ) {
 --------------------------------------------------------------------------------------------*/
 
 const rowSafe = (puzzleArray, emptyCell, num) => {
-  if ( puzzleArray[ emptyCell.rowIndex ].indexOf(num) == -1 ) return true // -1 is return value of .find() if value not found
-  return false
+  // -1 is return value of .find() if value not found
+  return puzzleArray[ emptyCell.rowIndex ].indexOf(num) == -1 
 }
 const colSafe = (puzzleArray, emptyCell, num) => {
-  if ( puzzleArray.some(row => row[ emptyCell.colIndex ] == num ) ) return false
-  return true
+  return puzzleArray.some(row => row[ emptyCell.colIndex ] != num )
 }
 
 const boxSafe = (puzzleArray, emptyCell, num) => {
@@ -54,12 +53,9 @@ const boxSafe = (puzzleArray, emptyCell, num) => {
 }
 
 const safeToPlace = ( puzzleArray, emptyCell, num ) => {
-  if (rowSafe(puzzleArray, emptyCell, num) && 
+  return rowSafe(puzzleArray, emptyCell, num) && 
   colSafe(puzzleArray, emptyCell, num) && 
-  boxSafe(puzzleArray, emptyCell, num) ) {
-    return true
-  }
-  return false
+  boxSafe(puzzleArray, emptyCell, num) 
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -70,17 +66,16 @@ const nextEmptyCell = puzzleArray => {
   const emptyCell = {rowIndex: "", colIndex: ""}
 
   puzzleArray.forEach( (row, rowIndex) => {
-      if (emptyCell.colIndex !== "" ) return // If this key has already been assigned, skip iteration
-      firstZero = row.find( col => col === 0) // find first zero-element
-      if (firstZero === undefined) return; // if no zero present, skip to next row
-      emptyCell.rowIndex = rowIndex
-      emptyCell.colIndex = row.indexOf(firstZero)
-    })
-  if (emptyCell.colIndex !== "" ) {
-    return emptyCell
-  } else {
-    return false // If emptyCell was never assigned, there are no more zeros
-  }
+    if (emptyCell.colIndex !== "" ) return // If this key has already been assigned, skip iteration
+    let firstZero = row.find( col => col === 0) // find first zero-element
+    if (firstZero === undefined) return; // if no zero present, skip to next row
+    emptyCell.rowIndex = rowIndex
+    emptyCell.colIndex = row.indexOf(firstZero)
+  })
+
+  if (emptyCell.colIndex !== "" ) return emptyCell
+  // If emptyCell was never assigned, there are no more zeros
+  return false
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -90,18 +85,18 @@ const nextEmptyCell = puzzleArray => {
 const fillPuzzle = startingBoard => {
 
   const emptyCell = nextEmptyCell(startingBoard)
-  if (!emptyCell) { // If there are no more zeros, the board is finished, return it
-    return startingBoard
-  }
+   // If there are no more zeros, the board is finished, return it
+  if (!emptyCell) return startingBoard
+
   // Shuffled [0 - 9 ] array fills board randomly each pass
   for (num of shuffle(numArray) ) {   
     counter++
     if ( counter > 20_000_000 ) throw new Error ("Recursion Timeout")
     if ( safeToPlace( startingBoard, emptyCell, num) ) {
-      startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num // If safe to place number, place it
-      if ( fillPuzzle(startingBoard) ) { // Recursively call the fill function to place num in next empty cell
-        return startingBoard
-      }
+      // If safe to place number, place it
+      startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num 
+      // Recursively call the fill function to place num in next empty cell
+      if ( fillPuzzle(startingBoard) ) return startingBoard 
       // If we were unable to place the future num, that num was wrong. Reset it and try next value
       startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = 0 
     }
@@ -120,9 +115,9 @@ const pokeHoles = (startingBoard, holes) => {
   const removedVals = []
 
   while (removedVals.length < holes) {
-    val = Math.floor(Math.random() * 81) // Value between 0-81
-    randomRowIndex = Math.floor(val / 9) // Integer 0-8 for row index
-    randomColIndex = val % 9 
+    const val = Math.floor(Math.random() * 81) // Value between 0-81
+    const randomRowIndex = Math.floor(val / 9) // Integer 0-8 for row index
+    const randomColIndex = val % 9 
 
     if (!startingBoard[ randomRowIndex ]) continue // guard against cloning error
     if ( startingBoard[ randomRowIndex ][ randomColIndex ] == 0 ) continue // If cell already empty, restart loop
