@@ -34,7 +34,7 @@ const rowSafe = (puzzleArray, emptyCell, num) => {
   return puzzleArray[ emptyCell.rowIndex ].indexOf(num) == -1 
 }
 const colSafe = (puzzleArray, emptyCell, num) => {
-  return puzzleArray.some(row => row[ emptyCell.colIndex ] != num )
+  return !puzzleArray.some(row => row[ emptyCell.colIndex ] == num )
 }
 
 const boxSafe = (puzzleArray, emptyCell, num) => {
@@ -164,3 +164,7 @@ function newStartingBoard  (holes) {
 //   }
   // console.log('All Done')
 // }
+
+//   let [rvals, start, solve] = newStartingBoard(50)
+//   rowSafe(start, {rowIndex: 0, colIndex: 0}, 5)
+//   colSafe(start, {rowIndex: 0, colIndex: 0}, 5)
