@@ -103,9 +103,10 @@ const allCells = [
     [ ...document.querySelector( '[data-row="8"]' ).getElementsByTagName( "td" ) ],
 ]
 
+const navBar = document.querySelector('nav')
 const modalBackground = document.querySelector('#modal-background');
 const modalContainer = document.querySelector('#modal-container');
-
+const menuButton = document.querySelector('#menu-toggle')
 const boardNameDisplay = document.getElementById( "board-name" );
 const changeBoardNameButton = document.getElementById( "change-board-name-button" );
 
@@ -364,6 +365,7 @@ function logUserIn (formSubmitEvent) {
         renderUserBoards( userData );
         document.getElementById( 'login-form' ).classList.toggle( 'hidden' );
         document.getElementById( "player-info" ).classList.toggle( "hidden" );
+        menuButton.classList.toggle( "hidden" );
     } )
 }
 
@@ -486,7 +488,7 @@ function handleModalClick( modalClickEvent ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.addEventListener( "DOMContentLoaded", () => {
-    // fetchBoard( 1 ).then( renderBoard );
+    menuButton.addEventListener('click', () => { navBar.classList.toggle( 'open' ) })
     ///////////// Handling board clicks /////////////
     modalContainer.addEventListener('submit', handleFormSubmit)
     modalContainer.addEventListener('click', handleModalClick)

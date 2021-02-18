@@ -12,8 +12,8 @@ body {
 
 #sudoku-board {
     border-collapse: collapse;
-    width: 550px;
-    height: 550px;
+    width: 600px;
+    height: 600px;
 }
 
 .cell {
@@ -81,9 +81,10 @@ body {
 
 header {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr auto;
     color: white;
     background: black;
+    align-items: center;
 }
 
 #player-info {
@@ -280,4 +281,28 @@ content {
 
 .completed {
     color: rgb(40, 114, 40)
+}
+
+nav {
+    background: black;
+    transform: rotateX(90deg);
+    transform-origin: 0 0 0;
+    transition: 0.5s
+}
+
+.open {
+    transform: rotateX(0deg);
+}
+
+#menu-toggle {
+    height: 20px;
+    margin: 25px;
+}
+
+button {
+    border-radius: 10px;
+    background: transparent;
+    color: white;
+    border: none;
+    outline: none;
 }
