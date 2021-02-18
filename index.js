@@ -113,15 +113,15 @@ function beltLevel( points ) {
     switch ( true ) {
         case ( 5000 <= points ):
             return "Black";
-        case ( 3000 <= points < 5000 ):
+        case ( 3000 <= points && points < 5000 ):
             return "Brown";
-        case ( 2000 <= points < 3000 ):
+        case ( 2000 <= points && points < 3000 ):
             return "Green";
-        case ( 1000 <= points < 2000 ):
+        case ( 1000 <= points && points < 2000 ):
             return "Purple";
-        case ( 500 <= points < 1000 ):
+        case ( 500 <= points && points < 1000 ):
             return "Blue";
-        case ( 200 <= points < 500 ):
+        case ( 200 <= points && points < 500 ):
             return "Red";
         case ( points <= 200 ):
             return "White";
