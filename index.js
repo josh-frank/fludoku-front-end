@@ -63,7 +63,7 @@ function postNewUserBoard( userId, boardId ) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( { user_id: userId, board_id: boardId } )  
-    } )
+    } ).then( response => response.json() )
 }
 
 function patchUserBoard( userBoardID, userBoardConfig ) {
@@ -186,8 +186,11 @@ function createNewGame(newGameSubmit) {
         body: JSON.stringify(newBoardData)
     }
     postNewBoard( newBoardConfig ).then( boardData => {
-        renderBoard( boardData );
-        postNewUserBoard( currentUserId, boardData.id )
+        postNewUserBoard( currentUserId, boardData.id ).then( userBoardData => {
+            sudokuBoard.dataset.userBoardId = userBoardData.id;
+            sudokuBoard.dataset.solved = userBoardData.solved;
+            renderBoard( boardData );
+        } );
 
     } );
     newGameForm.reset()
