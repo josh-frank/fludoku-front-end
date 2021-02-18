@@ -151,20 +151,133 @@ content {
 }
 
 #modal-container {
-    min-height: 40vh;
-    width: 60vw;
+    height: 400px;
+    width: 500px;
     background: rgb(236, 236, 236);
     z-index: 1500;
     border-radius: 10px;
     box-shadow: 0 0 2px 2px black;
     border: 1px solid #000;
     display: grid;
+    grid-template-rows: 250px 150px;
+    grid-template-columns: 100%;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
+#modal-container h1 {
+    font-size: xx-large;
+}
+
+#modal-container #name-input {
+    height: 40px;
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: large;
+    margin: 5px;
+}
+
+#modal-container input{
+    height: 35px;
+    width: 95px;
+    font-size: large;
+    border-radius: 10px;
+    background: #000;
+    color: white;
+}
+
+#login-form {
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+}
+
+#users-boards-list {
+    grid-row: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 20px;
+    height: 225px;
+}
+
+#new-game-form {
+    grid-row: 2;
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-columns: 1fr 1fr;
+}
+
+#new-game-form input[name=board_name] {
+    height: 25px;
+    width: 250px;
+    text-align: center;
+    grid-column: span 2;
+}
+
+#new-game-form label {
+    grid-column: span 2;
+    grid-row: 2;
+}
+
+#new-game-form input[type=range] {
+    grid-row: 3;
+    grid-column: 1;
+    width: 100%;
+}
+
+#new-game-form span {
+    grid-row: 3;
+    grid-column: 2;
+    align-self: center;
+}
+
+#new-game-form input[type=submit] {
+    grid-row: 4;
+    grid-column: span 2;
 }
 
 .hidden,
+#login-form.hidden,
 .hidden#player-info,
 #modal-container.hidden,
 #modal-background.hidden {
     display: none;
 }
 
+
+.user-board {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 350px 50px 50px;
+    grid-gap: 5px;
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    justify-content: center;
+    justify-items: center;
+}
+
+#users-boards-list {
+    padding: 5px;
+    width: 100%
+}
+
+.delete-button {
+    background: rgb(172, 35, 35);
+    color: white;
+    border-radius: 10px;
+}
+
+.load-button {
+    border-radius: 10px;
+    background: #000;
+    color: white;
+}
+
+.completed {
+    color: rgb(40, 114, 40)
+}

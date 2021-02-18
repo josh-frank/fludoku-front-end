@@ -376,6 +376,7 @@ function renderUserBoards (userData) {
     const newGameName = document.createElement('input')
     newGameName.name = "board_name"
     newGameName.placeholder = "Enter New Game Name"
+    newGameName.setAttribute('maxlength', '25')
     newGameName.required = true
 
     const newGameDifficultyLabel = document.createElement('label')
@@ -409,10 +410,11 @@ function renderUserBoards (userData) {
 
     for ( const userBoard of userData.user_boards ) {
         const thisBoard = document.createElement('li')
-        thisBoard.className = "user-board"
+        thisBoard.classList.add("user-board")
         thisBoard.dataset.userBoardId = userBoard.id
         thisBoard.dataset.boardId = userBoard.board_id
         thisBoard.dataset.solved = userBoard.solved
+        if (userBoard.solved) thisBoard.classList.add("completed")
         thisBoard.dataset.failed = userBoard.failed
         thisBoard.dataset.difficulty = userBoard.difficulty
         thisBoard.textContent = `${userBoard.board_name} - Difficulty: ${userBoard.difficulty}`
