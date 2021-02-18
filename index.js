@@ -222,6 +222,7 @@ function createNewGame(newGameSubmit) {
 
     } );
     newGameForm.reset()
+    solveButton.disabled = false
     toggleModalContainer();
 }
 
@@ -253,7 +254,7 @@ function saveProgress() {
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( progressData => {
         console.log( "Saved" );
         if ( progressData.board_in_progress.join() == progressData.solved_board.join() ) {
-            markPuzzleAsSolved( parseInt( sudokuBoard.dataset.difficulty ) )
+            markPuzzleAsSolved( parseInt( sudokuBoard.dataset.difficulty ), false )
         }
     } );
 }
@@ -268,6 +269,7 @@ function changePoints( pointChange ) {
     patchUser( currentUserId, pointChangeConfig ).then( pointChangeData => {
         userPoints.textContent = pointChangeData.points;
         userLevel.textContent = beltLevel( pointChangeData.points );
+        if (sudokuBoard.dataset.solved === "false") saveProgress();
     } );
 }
 
@@ -285,8 +287,9 @@ function checkBoardProgress () {
             totalPointChange--;
         }
     }
+    debugger
     changePoints( totalPointChange );
-    saveProgress();
+    // saveProgress();
 }
 
 function clearGuesses() {
@@ -303,16 +306,17 @@ function changeBoardName( changeNameFormSubmission ) {
     } ).then( toggleChangeNameForm );
 }
 
-function markPuzzleAsSolved( pointChangeValue ) {
+function markPuzzleAsSolved( pointChangeValue, successStatus ) {
     const userBoardId = sudokuBoard.dataset.userBoardId
     const patchUserBoardConfig = {
         method: "PATCH",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({
             solved: true,
-            failed: true
+            failed: successStatus
         })
     }
+    sudokuBoard.dataset.solved = true
     changePoints( pointChangeValue );
     solveButton.disabled = true;
     return patchUserBoard( userBoardId, patchUserBoardConfig );
@@ -382,7 +386,7 @@ function renderUserBoards (userData) {
     const newGameDifficulty = document.createElement('input')
     newGameDifficulty.type = 'range'
     newGameDifficulty.name = "difficulty"
-    newGameDifficulty.min = 10
+    newGameDifficulty.min = 3
     newGameDifficulty.max = 60
     newGameDifficulty.value = 40
     
@@ -438,7 +442,7 @@ function getHint () {
     if (allCells[randomRow][randomColumn].firstChild.value) getHint()
     allCells[randomRow][randomColumn].firstChild.value = value
     allCells[randomRow][randomColumn].firstChild.classList.add('hint')
-    saveProgress();
+    // saveProgress();
     changePoints( -1 );
 }
 
@@ -490,7 +494,7 @@ document.addEventListener( "DOMContentLoaded", () => {
     document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
     ///////////// Handling controls clicks /////////////
     document.getElementById( "change-board-name-form" ).addEventListener( "submit", changeBoardName );
-    solveButton.addEventListener( "click", () => { markPuzzleAsSolved( -parseInt( sudokuBoard.dataset.difficulty ) ).then( renderSolution ) } );
+    solveButton.addEventListener( "click", () => { markPuzzleAsSolved( -parseInt( sudokuBoard.dataset.difficulty ), true ).then( renderSolution ) } );
     document.getElementById( "get-hint" ).addEventListener( "click", getHint);
     document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
     document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);
