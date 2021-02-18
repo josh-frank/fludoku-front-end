@@ -16,10 +16,10 @@
         
         <header>
             <h1 id="logo"> Fludoku </h1>
-            <section id="player-info"> 
-                <span> Welcole back Josh</span>
-                <span> Fludoku White Belt </span>
-                <span> Points <span id="points"> 10 </span></span>
+            <section id="player-info" class="hidden"> 
+                <span> Welcome back, <span id="username"></span>!</span>
+                <span> Fludoku <span id="level"></span> Belt </span>
+                <span> Points: <span id="points"></span></span>
             </section>
         </header>
         <nav> 
@@ -147,7 +147,7 @@
                 <button id="solve"> Solve Puzzle </button>
                 <button id="get-hint"> Get Hint </button>
                 <button id="check-progress"> Check Progress </button>
-                <button id="clear-guesses"> Clear Guesses </button>
+                <button id="clear-guesses"> Revert to Last Save </button>
             </section>
         </content>
         <script src="sudoku-logic.js"></script>

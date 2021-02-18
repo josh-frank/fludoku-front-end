@@ -101,6 +101,18 @@ const modalContainer = document.querySelector('#modal-container');
 const boardNameDisplay = document.getElementById( "board-name" );
 const changeBoardNameButton = document.getElementById( "change-board-name-button" );
 
+function beltLevel( points ) {
+    switch ( true ) {
+        case ( points <= 20 ): return "White";
+        case ( 20 <= points < 50 ): return "Red";
+        case ( 50 <= points < 100 ): return "Blue";
+        case ( 100 <= points < 200 ): return "Purple";
+        case ( 200 <= points < 300 ): return "Green";
+        case ( 300 <= points < 500 ): return "Brown";
+        case ( 500 <= points ): return "Black";
+    }
+}
+
 function toggleModalContainer() {
     modalContainer.classList.toggle( 'hidden' );
     modalBackground.classList.toggle( 'hidden' );
@@ -221,7 +233,7 @@ function saveProgress() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( { board_in_progress: updatedBoardInProgress } )
     };
-    console.log('in saveProgress')
+    boardInProgress = updatedBoardInProgress;
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( console.log( "Saved" ) );
 }
 
@@ -236,7 +248,7 @@ function checkBoardProgress () {
 
 function clearGuesses() {
     if ( sudokuBoard.dataset.solved === "true" ) return
-    fillBoard( startingBoard );
+    fillBoard( boardInProgress );
 }
 
 function changeBoardName( changeNameFormSubmission ) {
@@ -259,9 +271,7 @@ function markPuzzleAsSolved() {
         })
     }
 
-    return patchUserBoard(userBoardId, patchUserBoardConfig)//.then( () => {
-    //     // renderSolution()
-    // })
+    return patchUserBoard( userBoardId, patchUserBoardConfig )
 }
 
 function renderSolution () {
@@ -299,10 +309,14 @@ function logUserIn (formSubmitEvent) {
     const usersName = formSubmitEvent.target.name.value
     fetchUserInfoByName( usersName ).then( userData => {
         formSubmitEvent.target.reset()
-        currentUserId = userData.id
-        renderUserBoards( userData ) 
-        document.getElementById('login-form').classList.toggle( 'hidden' )
-    })
+        document.getElementById( "username" ).textContent = userData.name;
+        document.getElementById( "level" ).textContent = beltLevel( userData.points );
+        document.getElementById( "points" ).textContent = userData.points;
+        currentUserId = userData.id;
+        renderUserBoards( userData );
+        document.getElementById( 'login-form' ).classList.toggle( 'hidden' );
+        document.getElementById( "player-info" ).classList.toggle( "hidden" );
+    } )
 }
 
 function renderUserBoards (userData) {
@@ -440,8 +454,10 @@ document.addEventListener( "DOMContentLoaded", () => {
 } );
 
 /*
-ToDo 2/17
-- incorporate patch request into solve puzzle button
-- add functionality to hint button
-- styling and sorting renderUserBoards by status/date
+ToDo 2/18
+- define and implement a points system
+- handle wins
+- add some slicker styling
+- alert user when game is saved/won
+- add a working timer
 */
