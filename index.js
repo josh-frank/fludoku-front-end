@@ -224,7 +224,7 @@ function createNewGame(newGameSubmit) {
     newGameForm.reset()
     solveButton.disabled = false
     toggleModalContainer();
-}
+} 
 
 function openLoadWindow() {
     toggleModalContainer();
