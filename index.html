@@ -31,16 +31,21 @@
             <button id="save-game"> Save Progress </button>
         </nav>
         <content>
-            <section id="timer-section"> 
-                <table>
-                    <tr>
-                        <td id="timer-text">Timer </td>
-                    </tr>
-                    <tr> 
-                        <td id="timer-value">1:00 </td>
-                    </tr>
-                </table>
-            </section>
+            <div id="sidebar">
+                <section id="timer-section"> 
+                    <table>
+                        <tr>
+                            <td id="timer-text">Timer </td>
+                        </tr>
+                        <tr> 
+                            <td id="timer-value">
+                                <span id="mins">00</span>:<span id="secs">00</span>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+                <section id="notices"></section>
+            </div>
             <form id="change-board-name-form">
                 <input id="board-name" disabled="true"></input>
                 <input type="submit" name="change-board-name-button" id="change-board-name-button" class="hidden"></input>
