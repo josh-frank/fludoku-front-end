@@ -85,6 +85,8 @@ let removedValues = [];
 let startingBoard = [];
 let boardInProgress = []
 let solution = [];
+let currentTimerValue = 0;
+let timer;
 
 const sudokuBoard = document.getElementById( "sudoku-board" );
 const solveButton = document.getElementById( "solve" );
@@ -106,9 +108,12 @@ const allCells = [
 const navBar = document.querySelector('nav')
 const modalBackground = document.querySelector('#modal-background');
 const modalContainer = document.querySelector('#modal-container');
-const menuButton = document.querySelector('#menu-toggle')
+const menuButton = document.querySelector('#menu-toggle');
 const boardNameDisplay = document.getElementById( "board-name" );
 const changeBoardNameButton = document.getElementById( "change-board-name-button" );
+const currentMins = document.getElementById( "mins" );
+const currentSecs = document.getElementById( "secs" );
+const notices = document.getElementById( "notices" );
 
 function beltLevel( points ) {
     switch ( true ) {
@@ -189,6 +194,7 @@ function renderBoard( boardData ) {
     solution = boardData.solved_board;
     boardInProgress = boardData.board_in_progress
     fillBoard( boardData.board_in_progress );
+    if ( sudokuBoard.dataset.solved === "false" ) { timer = setInterval( incrementTimer, 1000 ); }
 }
 
 function createNewGame(newGameSubmit) {
@@ -218,6 +224,8 @@ function createNewGame(newGameSubmit) {
             sudokuBoard.dataset.userBoardId = userBoardData.id;
             sudokuBoard.dataset.solved = userBoardData.solved;
             sudokuBoard.dataset.difficulty = userBoardData.difficulty;
+            currentTimerValue = userBoardData.timer;
+            renderTime();
             renderBoard( boardData );
         } );
 
@@ -228,6 +236,8 @@ function createNewGame(newGameSubmit) {
 } 
 
 function openLoadWindow() {
+    // currentTimerValue = 0;
+    clearInterval( timer );
     toggleModalContainer();
     modalContainer.querySelector( "ul#users-boards-list" ).remove();
     modalContainer.querySelector( "form#new-game-form" ).remove();
@@ -246,17 +256,25 @@ function saveProgress() {
             return !updatedNumber ? 0 : updatedNumber;
         } )
     } );
-    const progressConfig = {
+    const progressBoardConfig = {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( { board_in_progress: updatedBoardInProgress } )
     };
+    const progressUserBoardConfig = {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify( { timer: currentTimerValue } )
+    };
     boardInProgress = updatedBoardInProgress;
-    patchBoard( parseInt( sudokuBoard.dataset.id ), progressConfig ).then( progressData => {
-        console.log( "Saved" );
+    patchBoard( parseInt( sudokuBoard.dataset.id ), progressBoardConfig ).then( progressData => {
         if ( progressData.board_in_progress.join() == progressData.solved_board.join() ) {
-            markPuzzleAsSolved( parseInt( sudokuBoard.dataset.difficulty ), false )
+            markPuzzleAsSolved( parseInt( sudokuBoard.dataset.difficulty ), false );
+            notices.innerHTML = `Congrats,<br />You won!<br />+${ sudokuBoard.dataset.difficulty } extra<br />points!`;
+            setTimeout( () => { notices.textContent = "" }, 3000 );
         }
+        patchUserBoard( sudokuBoard.dataset.userBoardId, progressUserBoardConfig );
+        renderTime();
     } );
 }
 
@@ -270,6 +288,8 @@ function changePoints( pointChange ) {
     patchUser( currentUserId, pointChangeConfig ).then( pointChangeData => {
         userPoints.textContent = pointChangeData.points;
         userLevel.textContent = beltLevel( pointChangeData.points );
+        notices.innerHTML += `<br />${ pointChange } Point${ Math.abs( pointChange ) === 1 ? "" : "s" }!<br />`;
+        setTimeout( () => { notices.textContent = "" }, 3000 );
         if (sudokuBoard.dataset.solved === "false") saveProgress();
     } );
 }
@@ -288,9 +308,7 @@ function checkBoardProgress () {
             totalPointChange--;
         }
     }
-    debugger
     changePoints( totalPointChange );
-    // saveProgress();
 }
 
 function clearGuesses() {
@@ -311,15 +329,17 @@ function markPuzzleAsSolved( pointChangeValue, successStatus ) {
     const userBoardId = sudokuBoard.dataset.userBoardId
     const patchUserBoardConfig = {
         method: "PATCH",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify( {
             solved: true,
-            failed: successStatus
-        })
+            failed: successStatus,
+            timer: currentTimerValue
+        } )
     }
     sudokuBoard.dataset.solved = true
     changePoints( pointChangeValue );
     solveButton.disabled = true;
+    clearInterval( timer );
     return patchUserBoard( userBoardId, patchUserBoardConfig );
 }
 
@@ -389,7 +409,7 @@ function renderUserBoards (userData) {
     const newGameDifficulty = document.createElement('input')
     newGameDifficulty.type = 'range'
     newGameDifficulty.name = "difficulty"
-    newGameDifficulty.min = 3
+    newGameDifficulty.min = 10
     newGameDifficulty.max = 60
     newGameDifficulty.value = 40
     
@@ -407,7 +427,7 @@ function renderUserBoards (userData) {
     if ( !userData.user_boards.length ) {
         const newGamePrompt = document.createElement('p')
         newGamePrompt.textContent = "You have no recent games. Start one now!"
-        modalContainer.append(newGamePrompt)
+        listOfBoards.append(newGamePrompt)
     }
 
     for ( const userBoard of userData.user_boards ) {
@@ -416,6 +436,7 @@ function renderUserBoards (userData) {
         thisBoard.dataset.userBoardId = userBoard.id
         thisBoard.dataset.boardId = userBoard.board_id
         thisBoard.dataset.solved = userBoard.solved
+        thisBoard.dataset.timer = userBoard.timer;
         if (userBoard.solved) thisBoard.classList.add("completed")
         thisBoard.dataset.failed = userBoard.failed
         thisBoard.dataset.difficulty = userBoard.difficulty
@@ -446,7 +467,6 @@ function getHint () {
     if (allCells[randomRow][randomColumn].firstChild.value) getHint()
     allCells[randomRow][randomColumn].firstChild.value = value
     allCells[randomRow][randomColumn].firstChild.classList.add('hint')
-    // saveProgress();
     changePoints( -1 );
 }
 
@@ -470,7 +490,9 @@ function handleModalClick( modalClickEvent ) {
                 sudokuBoard.dataset.userBoardId = thisUserBoard.dataset.userBoardId;
                 sudokuBoard.dataset.solved = thisUserBoard.dataset.solved;
                 sudokuBoard.dataset.difficulty = thisUserBoard.dataset.difficulty;
+                currentTimerValue = parseInt( thisUserBoard.dataset.timer );
                 renderBoard(boardData);
+                renderTime();
                 solveButton.disabled = thisUserBoard.dataset.solved === "true" ? true : false;
                 if (thisUserBoard.dataset.failed === "true") renderSolution();
             });
@@ -481,6 +503,17 @@ function handleModalClick( modalClickEvent ) {
             thisUserBoard.remove();
             break;
     }
+}
+
+function renderTime() {
+    const currentMinValue = Math.floor( currentTimerValue / 60 ), currentSecValue = currentTimerValue % 60;
+    currentMins.textContent = currentMinValue < 10 ? "0" + currentMinValue : currentMinValue;
+    currentSecs.textContent = currentSecValue < 10 ? "0" + currentSecValue : currentSecValue;
+}
+
+function incrementTimer() {
+    currentTimerValue++;
+    renderTime();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -495,7 +528,11 @@ document.addEventListener( "DOMContentLoaded", () => {
     ///////////// Handling navbar clicks /////////////
     document.getElementById( "load-game" ).addEventListener( "click", openLoadWindow );
     document.getElementById( "edit-game" ).addEventListener( "click", toggleChangeNameForm );
-    document.getElementById( "save-game" ).addEventListener( "click", saveProgress );
+    document.getElementById( "save-game" ).addEventListener( "click", () => {
+        saveProgress();
+        notices.innerHTML = "Game<br />Saved!";
+        setTimeout( () => { notices.textContent = "" }, 3000 );
+    } );
     ///////////// Handling controls clicks /////////////
     document.getElementById( "change-board-name-form" ).addEventListener( "submit", changeBoardName );
     solveButton.addEventListener( "click", () => { markPuzzleAsSolved( -parseInt( sudokuBoard.dataset.difficulty ), true ).then( renderSolution ) } );
@@ -508,12 +545,3 @@ document.addEventListener( "DOMContentLoaded", () => {
     sudokuBoard.addEventListener( 'input', keepLastDigit )
     renderLogin()
 } );
-
-/*
-ToDo 2/18
-- define and implement a points system
-- handle wins
-- add some slicker styling
-- alert user when game is saved/won
-- add a working timer
-*/
