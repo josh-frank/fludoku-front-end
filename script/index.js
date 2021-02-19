@@ -15,10 +15,6 @@ function peers( puzzle, row, column ) {
     return [ ...new Set( result ) ];
 }
 
-/* function peers( puzzle, row, column ) {
-    const topLeftCorner = [ Math.floor( row / 3 ) * 3, Math.floor( column / 3 ) * 3];
-    return [ ...new Set( puzzle[ row ].concat( puzzle.map( row => row[ column ] ) ).concat( [ puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] + 2 ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] + 2 ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] + 2 ] ] ).filter( digit => !!digit ) ) ];
-} */
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +110,9 @@ const changeBoardNameButton = document.getElementById( "change-board-name-button
 const currentMins = document.getElementById( "mins" );
 const currentSecs = document.getElementById( "secs" );
 const notices = document.getElementById( "notices" );
+const hintButton = document.getElementById( "get-hint" )
+const checkProgressButton = document.getElementById( "check-progress" )
+const saveGameButton = document.getElementById( "save-game" )
 
 function beltLevel( points ) {
     switch ( true ) {
@@ -232,6 +231,9 @@ function createNewGame(newGameSubmit) {
     } );
     newGameForm.reset()
     solveButton.disabled = false
+    hintButton.disabled = false
+    checkProgressButton.disabled = false
+    saveGameButton.disabled = false
     toggleModalContainer();
 } 
 
@@ -270,7 +272,7 @@ function saveProgress() {
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressBoardConfig ).then( progressData => {
         if ( progressData.board_in_progress.join() == progressData.solved_board.join() ) {
             markPuzzleAsSolved( parseInt( sudokuBoard.dataset.difficulty ), false );
-            notices.innerHTML = `Congrats,<br />You won!<br />+${ sudokuBoard.dataset.difficulty } extra<br />points!`;
+            notices.innerHTML += `Congrats,<br />You won!<br />+${ sudokuBoard.dataset.difficulty } extra<br />points!`;
             setTimeout( () => { notices.textContent = "" }, 3000 );
         }
         patchUserBoard( sudokuBoard.dataset.userBoardId, progressUserBoardConfig );
@@ -288,9 +290,11 @@ function changePoints( pointChange ) {
     patchUser( currentUserId, pointChangeConfig ).then( pointChangeData => {
         userPoints.textContent = pointChangeData.points;
         userLevel.textContent = beltLevel( pointChangeData.points );
-        notices.innerHTML += `<br />${ pointChange } Point${ Math.abs( pointChange ) === 1 ? "" : "s" }!<br />`;
-        setTimeout( () => { notices.textContent = "" }, 3000 );
-        if (sudokuBoard.dataset.solved === "false") saveProgress();
+        if  ( sudokuBoard.dataset.solved === "false" ) {
+            notices.innerHTML += `<br />${ pointChange } Point${ Math.abs( pointChange ) === 1 ? "" : "s" }!<br />`;
+            setTimeout( () => { notices.textContent = "" }, 3000 );
+            saveProgress()
+        }
     } );
 }
 
@@ -339,6 +343,9 @@ function markPuzzleAsSolved( pointChangeValue, successStatus ) {
     sudokuBoard.dataset.solved = true
     changePoints( pointChangeValue );
     solveButton.disabled = true;
+    hintButton.disabled = true
+    checkProgressButton.disabled = true
+    saveGameButton.disabled = true
     clearInterval( timer );
     return patchUserBoard( userBoardId, patchUserBoardConfig );
 }
@@ -494,6 +501,9 @@ function handleModalClick( modalClickEvent ) {
                 renderBoard(boardData);
                 renderTime();
                 solveButton.disabled = thisUserBoard.dataset.solved === "true" ? true : false;
+                hintButton.disabled = thisUserBoard.dataset.solved === "true" ? true : false;
+                saveGameButton.disabled = thisUserBoard.dataset.solved === "true" ? true : false;
+                checkProgressButton.disabled = thisUserBoard.dataset.solved === "true" ? true : false;
                 if (thisUserBoard.dataset.failed === "true") renderSolution();
             });
             toggleModalContainer();
@@ -528,7 +538,7 @@ document.addEventListener( "DOMContentLoaded", () => {
     ///////////// Handling navbar clicks /////////////
     document.getElementById( "load-game" ).addEventListener( "click", openLoadWindow );
     document.getElementById( "edit-game" ).addEventListener( "click", toggleChangeNameForm );
-    document.getElementById( "save-game" ).addEventListener( "click", () => {
+    saveGameButton.addEventListener( "click", () => {
         saveProgress();
         notices.innerHTML = "Game<br />Saved!";
         setTimeout( () => { notices.textContent = "" }, 3000 );
@@ -536,8 +546,8 @@ document.addEventListener( "DOMContentLoaded", () => {
     ///////////// Handling controls clicks /////////////
     document.getElementById( "change-board-name-form" ).addEventListener( "submit", changeBoardName );
     solveButton.addEventListener( "click", () => { markPuzzleAsSolved( -parseInt( sudokuBoard.dataset.difficulty ), true ).then( renderSolution ) } );
-    document.getElementById( "get-hint" ).addEventListener( "click", getHint);
-    document.getElementById( "check-progress" ).addEventListener( "click", checkBoardProgress);
+    hintButton.addEventListener( "click", getHint);
+    checkProgressButton.addEventListener( "click", checkBoardProgress);
     document.getElementById( "clear-guesses" ).addEventListener( "click", clearGuesses);
     ///////////// Handling board clicks /////////////
     document.addEventListener( "click", handleDomClick );
