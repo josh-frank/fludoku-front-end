@@ -278,7 +278,7 @@ function saveProgress() {
         patchUserBoard( sudokuBoard.dataset.userBoardId, progressUserBoardConfig );
         renderTime();
     } );
-}
+} 
 
 function changePoints( pointChange ) {
     const currentPoints = parseInt( userPoints.textContent );
