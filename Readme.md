@@ -3,7 +3,7 @@
 <p align="center">
 <img src="assets/Fludoku.gif" alt="Fludoku Animation" >
 </p>
-
+ 
 ## Table of Contents
 
 * [Introduction](#introduction)
