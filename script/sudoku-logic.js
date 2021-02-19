@@ -168,3 +168,50 @@ function newStartingBoard  (holes) {
 //   let [rvals, start, solve] = newStartingBoard(50)
 //   rowSafe(start, {rowIndex: 0, colIndex: 0}, 5)
 //   colSafe(start, {rowIndex: 0, colIndex: 0}, 5)
+
+
+function checkMultipleSolutions (startingBoard) {
+  const possible_solutions = []
+  const emptyCellArray = emptyCellCoords(startingBoard)
+  for (let index = 0; index < emptyCellArray.length; index++) {
+    let emptyCellClone = [...emptyCellArray]
+    const startingPoint = emptyCellClone.splice(index, 1);
+    emptyCellClone.unshift( startingPoint[0] ) 
+    thisSolution = fillFromArray(startingBoard, emptyCellClone)
+    possible_solutions.push( thisSolution.join() )
+  }
+  if (possible_solutions.length == 1) console.log("1")
+
+
+
+}
+
+function fillFromArray(startingBoard, emptyCellArray) {
+  const emptyCell = nextStillEmptyCell(startingBoard, emptyCellArray)
+  if (!emptyCell) return startingBoard
+  for (num of shuffle(numArray) ) {   
+    if ( safeToPlace( startingBoard, emptyCell, num) ) {
+      startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num 
+      if ( fillPuzzle(startingBoard) ) return startingBoard 
+      startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = 0 
+    }
+  }
+  return false
+}
+
+function nextStillEmptyCell (startingBoard, emptyCellArray) {
+  for (coords of emptyCellArray) {
+    if (startingBoard[ coords.row ][ coords. col ] === 0) return {rowIndex: coords.row, colIndex: coords.col}
+  }
+  return false
+}
+
+function emptyCellCoords (startingBoard) {
+  const listOfEmptyCells = []
+  for (const row of range(0,8)) {
+    for (const col of range(0,8) ) {
+      if (startingBoard[row][col] === 0 ) listOfEmptyCells.push( {row, col } )
+    }
+  }
+  return listOfEmptyCells
+}
