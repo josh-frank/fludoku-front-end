@@ -267,7 +267,7 @@ function saveProgress() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify( { timer: currentTimerValue } )
-    };
+    }; 
     boardInProgress = updatedBoardInProgress;
     patchBoard( parseInt( sudokuBoard.dataset.id ), progressBoardConfig ).then( progressData => {
         if ( progressData.board_in_progress.join() == progressData.solved_board.join() ) {
