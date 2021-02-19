@@ -545,12 +545,3 @@ document.addEventListener( "DOMContentLoaded", () => {
     sudokuBoard.addEventListener( 'input', keepLastDigit )
     renderLogin()
 } );
-
-/*
-ToDo 2/18
-- define and implement a points system
-- handle wins
-- add some slicker styling
-- alert user when game is saved/won
-- add a working timer
-*/
