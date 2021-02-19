@@ -20,10 +20,10 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const boardUrl = "http://localhost:3000/boards"
-const userBoardUrl = "http://localhost:3000/user_boards"
-const userUrl = "http://localhost:3000/users"
-const loginUrl = "http://localhost:3000/login"
+const boardUrl = "https://fludoku.herokuapp.com/boards"
+const userBoardUrl = "https://fludoku.herokuapp.com/user_boards"
+const userUrl = "https://fludoku.herokuapp.com/users"
+const loginUrl = "https://fludoku.herokuapp.com/login"
 
 function fetchUserInfoByName(usersName) {
     return fetch( `${ loginUrl }?name=${ usersName }` )
