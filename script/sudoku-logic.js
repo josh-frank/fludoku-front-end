@@ -135,6 +135,7 @@ const pokeHoles = (startingBoard, holes) => {
     if ( !fillPuzzle( proposedBoard ) ) {  
       startingBoard[ randomRowIndex ][ randomColIndex ] = removedVals.pop().val 
     }
+    checkMultipleSolutions(startingBoard)
   }
   return [removedVals, startingBoard]
 }
@@ -153,59 +154,57 @@ function newStartingBoard  (holes) {
     return [removedVals, startingBoard, solvedBoard]
   } catch (error) {
       // console.log(`Stopped after: ${(new Date - startTime)} milliseconds`)
+      console.log(error)
     return newStartingBoard(holes)
   }
 }
 
-// function HundredGames() {
-//   for (let index = 0; index < 50; index++) {
-//     newStartingBoard(60)
-    // console.log('Next Game')
-//   }
-  // console.log('All Done')
-// }
+// The board will be completely solved once for each item in the empty cell list.
+// The empty cell array is rotated on each iteration, so that the order of the empty cells
+// And thus the order of solving the game, is different each time.
+// The solution for each attempt is pushed to a possible_solutions array as a string
+// Multiple solutions are identified by taking a unique Set from the possible solutions
+// and measuring its length.
 
-//   let [rvals, start, solve] = newStartingBoard(50)
-//   rowSafe(start, {rowIndex: 0, colIndex: 0}, 5)
-//   colSafe(start, {rowIndex: 0, colIndex: 0}, 5)
-
-
-function checkMultipleSolutions (startingBoard) {
+function checkMultipleSolutions (boardToCheck) {
   const possible_solutions = []
-  const emptyCellArray = emptyCellCoords(startingBoard)
+  const emptyCellArray = emptyCellCoords(boardToCheck)
   for (let index = 0; index < emptyCellArray.length; index++) {
-    let emptyCellClone = [...emptyCellArray]
+    emptyCellClone = [...emptyCellArray]
     const startingPoint = emptyCellClone.splice(index, 1);
     emptyCellClone.unshift( startingPoint[0] ) 
-    thisSolution = fillFromArray(startingBoard, emptyCellClone)
+    thisSolution = fillFromArray( boardToCheck.map( row => row.slice() ) , emptyCellClone)
     possible_solutions.push( thisSolution.join() )
+    if (Array.from(new Set(possible_solutions)).length > 1 ) throw new Error ("multiple solutions found")
   }
-  if (possible_solutions.length == 1) console.log("1")
-
-
-
+  return false
 }
 
+// This will attempt to solve the puzzle by placing values into the board in the order that
+// the empty cells list presents
 function fillFromArray(startingBoard, emptyCellArray) {
   const emptyCell = nextStillEmptyCell(startingBoard, emptyCellArray)
   if (!emptyCell) return startingBoard
   for (num of shuffle(numArray) ) {   
     if ( safeToPlace( startingBoard, emptyCell, num) ) {
       startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num 
-      if ( fillPuzzle(startingBoard) ) return startingBoard 
+      if ( fillFromArray(startingBoard, emptyCellArray) ) return startingBoard 
       startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = 0 
     }
   }
   return false
 }
 
+// As numbers get placed, not all of the initial cells are still empty.
+// This will find the next still empty cell in the list
 function nextStillEmptyCell (startingBoard, emptyCellArray) {
   for (coords of emptyCellArray) {
-    if (startingBoard[ coords.row ][ coords. col ] === 0) return {rowIndex: coords.row, colIndex: coords.col}
+    if (startingBoard[ coords.row ][ coords.col ] === 0) return {rowIndex: coords.row, colIndex: coords.col}
   }
   return false
 }
 
+// Get a list of all empty cells in the board from top-left to bottom-right
 function emptyCellCoords (startingBoard) {
   const listOfEmptyCells = []
   for (const row of range(0,8)) {
