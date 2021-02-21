@@ -132,10 +132,10 @@ const pokeHoles = (startingBoard, holes) => {
     
     // Attempt to solve the board after removing value. If it cannot be solved, restore the old value.
     // and remove that option from the list
-    if ( !fillPuzzle( proposedBoard ) ) {  
+    if ( !fillPuzzle( proposedBoard) || multiplePossibleSolutions( startingBoard.map ( row => row.slice() ) ) ) {  
       startingBoard[ randomRowIndex ][ randomColIndex ] = removedVals.pop().val 
     }
-    checkMultipleSolutions(startingBoard)
+
   }
   return [removedVals, startingBoard]
 }
@@ -166,7 +166,7 @@ function newStartingBoard  (holes) {
 // Multiple solutions are identified by taking a unique Set from the possible solutions
 // and measuring its length.
 
-function checkMultipleSolutions (boardToCheck) {
+function multiplePossibleSolutions (boardToCheck) {
   const possible_solutions = []
   const emptyCellArray = emptyCellCoords(boardToCheck)
   for (let index = 0; index < emptyCellArray.length; index++) {
@@ -175,7 +175,10 @@ function checkMultipleSolutions (boardToCheck) {
     emptyCellClone.unshift( startingPoint[0] ) 
     thisSolution = fillFromArray( boardToCheck.map( row => row.slice() ) , emptyCellClone)
     possible_solutions.push( thisSolution.join() )
-    if (Array.from(new Set(possible_solutions)).length > 1 ) throw new Error ("multiple solutions found")
+    if (Array.from(new Set(possible_solutions)).length > 1 ) {
+      console.log("Multiple Solutions")
+      return true
+    }
   }
   return false
 }
@@ -214,3 +217,8 @@ function emptyCellCoords (startingBoard) {
   }
   return listOfEmptyCells
 }
+
+
+
+// let [myRemovedVals, myStartingBoard, mySolvedBoard] = newStartingBoard(64)
+// multiplePossibleSolutions (myStartingBoard)
