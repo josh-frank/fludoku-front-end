@@ -171,14 +171,13 @@ function multiplePossibleSolutions (boardToCheck) {
   const possibleSolutions = []
   const emptyCellArray = emptyCellCoords(boardToCheck)
   for (let index = 0; index < emptyCellArray.length; index++) {
+    // Rotate a clone of the emptyCellArray by one for each iteration
     emptyCellClone = [...emptyCellArray]
     const startingPoint = emptyCellClone.splice(index, 1);
     emptyCellClone.unshift( startingPoint[0] ) 
     thisSolution = fillFromArray( boardToCheck.map( row => row.slice() ) , emptyCellClone)
     possibleSolutions.push( thisSolution.join() )
-    if (Array.from(new Set(possibleSolutions)).length > 1 ) {
-      return true
-    }
+    if (Array.from(new Set(possibleSolutions)).length > 1 ) return true
   }
   return false
 }
