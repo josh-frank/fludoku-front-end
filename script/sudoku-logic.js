@@ -162,21 +162,21 @@ function newStartingBoard  (holes) {
 // The board will be completely solved once for each item in the empty cell list.
 // The empty cell array is rotated on each iteration, so that the order of the empty cells
 // And thus the order of solving the game, is different each time.
-// The solution for each attempt is pushed to a possible_solutions array as a string
+// The solution for each attempt is pushed to a possibleSolutions array as a string
 // Multiple solutions are identified by taking a unique Set from the possible solutions
-// and measuring its length.
+// and measuring its length. If multiple possible solutions are found at any point
+// If will return true, prompting the pokeHoles function to select a new value for removal.
 
 function multiplePossibleSolutions (boardToCheck) {
-  const possible_solutions = []
+  const possibleSolutions = []
   const emptyCellArray = emptyCellCoords(boardToCheck)
   for (let index = 0; index < emptyCellArray.length; index++) {
     emptyCellClone = [...emptyCellArray]
     const startingPoint = emptyCellClone.splice(index, 1);
     emptyCellClone.unshift( startingPoint[0] ) 
     thisSolution = fillFromArray( boardToCheck.map( row => row.slice() ) , emptyCellClone)
-    possible_solutions.push( thisSolution.join() )
-    if (Array.from(new Set(possible_solutions)).length > 1 ) {
-      console.log("Multiple Solutions")
+    possibleSolutions.push( thisSolution.join() )
+    if (Array.from(new Set(possibleSolutions)).length > 1 ) {
       return true
     }
   }
