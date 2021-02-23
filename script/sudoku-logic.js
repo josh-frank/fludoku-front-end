@@ -169,11 +169,17 @@ function newStartingBoard  (holes) {
 
 function newGame(holes) {
   errorCount = 0
+  // renderLoading()
   try {
     return newStartingBoard(holes)
+  
   } catch (error) {
-    console.log(error)
-    console.log("💩")
+    closeLoading()
+    renderRetryPrompt()
+    document.getElementById('abort-button').addEventListener('click', ()=>{
+      document.getElementById('new-game-form').reset()
+      closeRetryPrompt()
+      })
   }
 }
 
@@ -200,17 +206,17 @@ function multiplePossibleSolutions (boardToCheck) {
   return false
 }
 
-  function eachSlice(string, length) {
-    const newArray = []
+  // function eachSlice(string, length) {
+  //   const newArray = []
   
-    for (let index = 0; index < length; index++) {
-      const startIndex = index*length
-      const endIndex = startIndex + length
-      const fragment = string.split(',').slice( startIndex, endIndex )
-      newArray.push( fragment.map( cell => parseInt(cell) ) )
-    }
-    return newArray
-  }
+  //   for (let index = 0; index < length; index++) {
+  //     const startIndex = index*length
+  //     const endIndex = startIndex + length
+  //     const fragment = string.split(',').slice( startIndex, endIndex )
+  //     newArray.push( fragment.map( cell => parseInt(cell) ) )
+  //   }
+  //   return newArray
+  // }
 
 
 // This will attempt to solve the puzzle by placing values into the board in the order that

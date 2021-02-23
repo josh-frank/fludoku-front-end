@@ -15,11 +15,6 @@ function peers( puzzle, row, column ) {
     return [ ...new Set( result ) ];
 }
 
-/* function peers( puzzle, row, column ) {
-    const topLeftCorner = [ Math.floor( row / 3 ) * 3, Math.floor( column / 3 ) * 3];
-    return [ ...new Set( puzzle[ row ].concat( puzzle.map( row => row[ column ] ) ).concat( [ puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] ][ topLeftCorner[ 1 ] + 2 ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] + 1 ][ topLeftCorner[ 1 ] + 2 ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] + 1 ], puzzle[ topLeftCorner[ 0 ] + 2 ][ topLeftCorner[ 1 ] + 2 ] ] ).filter( digit => !!digit ) ) ];
-} */
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +109,11 @@ const changeBoardNameButton = document.getElementById( "change-board-name-button
 const currentMins = document.getElementById( "mins" );
 const currentSecs = document.getElementById( "secs" );
 const notices = document.getElementById( "notices" );
+const loadingDiv = document.getElementById( "loading-div" );
+const loadingAnimationDiv = document.getElementById( "loading-animation" );
+const loadingFailedDiv = document.getElementById( "loading-failed" );
+const continueButton = document.getElementById( "continue-button" );
+const abortButton = document.getElementById( "abort-button" );
 
 function beltLevel( points ) {
     switch ( true ) {
@@ -198,11 +198,17 @@ function renderBoard( boardData ) {
 }
 
 function createNewGame(newGameSubmit) {
-    newGameSubmit.preventDefault()
+    // newGameSubmit.preventDefault()
     const newGameForm = newGameSubmit.target
     const holes = parseInt(newGameForm.difficulty.value), boardName = newGameForm.board_name.value
-    const [removedVals, startingBoard, solvedBoard] = newStartingBoard(holes)
-    
+    // const [removedVals, startingBoard, solvedBoard] = newStartingBoard(holes)
+    // 
+    const [removedVals, startingBoard, solvedBoard] = newGame(holes)
+    if (!startingBoard) {
+        document.getElementById('new-game-form').reset()
+        return
+    }
+    //
     const newBoardData = {
         board_name: boardName,
         starting_board: startingBoard,
@@ -231,9 +237,34 @@ function createNewGame(newGameSubmit) {
 
     } );
     newGameForm.reset()
+    closeLoading()
     solveButton.disabled = false
     toggleModalContainer();
 } 
+//*************************************************** */
+function renderLoading() {
+    modalContainer.style.display= 'none' ;
+    loadingDiv.style.display = 'block'
+    loadingAnimationDiv.style.display = 'block'
+}
+function renderRetryPrompt() {
+    modalContainer.style.display= 'none' ;
+    loadingDiv.style.display = 'block'
+    loadingAnimationDiv.style.display = 'none'
+    loadingFailedDiv.style.display = 'block'
+}
+function closeLoading() {
+    modalContainer.style.display= 'grid' ;
+    loadingDiv.style.display = 'none'
+    loadingAnimationDiv.style.display = 'none'
+}
+function closeRetryPrompt() {
+    modalContainer.style.display= 'grid' ;
+    loadingDiv.style.display = 'none'
+    loadingAnimationDiv.style.display = 'block'
+    loadingFailedDiv.style.display = 'none'
+}
+//*************************************************** */
 
 function openLoadWindow() {
     // currentTimerValue = 0;
@@ -410,7 +441,7 @@ function renderUserBoards (userData) {
     newGameDifficulty.type = 'range'
     newGameDifficulty.name = "difficulty"
     newGameDifficulty.min = 10
-    newGameDifficulty.max = 60
+    newGameDifficulty.max = 58
     newGameDifficulty.value = 40
     
     const newGameDifficultyValue = document.createElement('span')
@@ -476,7 +507,9 @@ function handleFormSubmit ( formSubmitEvent ) {
             logUserIn(formSubmitEvent)
             break
         case ( formSubmitEvent.target.id === 'new-game-form'):
-            createNewGame(formSubmitEvent)
+            formSubmitEvent.preventDefault()
+            renderLoading()
+            setTimeout( createNewGame, 100, formSubmitEvent)
             break
     }
 }
@@ -521,6 +554,7 @@ function incrementTimer() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.addEventListener( "DOMContentLoaded", () => {
+    ///////////// Handling menu toggle /////////////
     menuButton.addEventListener('click', () => { navBar.classList.toggle( 'open' ) })
     ///////////// Handling board clicks /////////////
     modalContainer.addEventListener('submit', handleFormSubmit)
