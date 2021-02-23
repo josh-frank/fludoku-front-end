@@ -12,6 +12,8 @@ const BLANK_BOARD = [
 
 // let startTime 
 let counter
+let pokeCounter
+let errorCount
 
 const numArray = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -113,11 +115,13 @@ const newSolvedBoard = _ => {
 
 const pokeHoles = (startingBoard, holes) => {
   const removedVals = []
+  const val = shuffle( range(0,80) )
 
   while (removedVals.length < holes) {
-    const val = Math.floor(Math.random() * 81) // Value between 0-81
-    const randomRowIndex = Math.floor(val / 9) // Integer 0-8 for row index
-    const randomColIndex = val % 9 
+    const nextVal = val.pop()
+    if (nextVal === undefined) throw new Error ("Impossible Game")
+    const randomRowIndex = Math.floor(nextVal / 9) // Integer 0-8 for row index
+    const randomColIndex = nextVal % 9 
 
     if (!startingBoard[ randomRowIndex ]) continue // guard against cloning error
     if ( startingBoard[ randomRowIndex ][ randomColIndex ] == 0 ) continue // If cell already empty, restart loop
@@ -132,7 +136,8 @@ const pokeHoles = (startingBoard, holes) => {
     
     // Attempt to solve the board after removing value. If it cannot be solved, restore the old value.
     // and remove that option from the list
-    if ( !fillPuzzle( proposedBoard) || multiplePossibleSolutions( startingBoard.map ( row => row.slice() ) ) ) {  
+
+    if ( multiplePossibleSolutions( startingBoard.map ( row => row.slice() ) ) ) {  
       startingBoard[ randomRowIndex ][ randomColIndex ] = removedVals.pop().val 
     }
 
@@ -144,6 +149,7 @@ function newStartingBoard  (holes) {
   try {
     // startTime = new Date // Timer to see render times
     counter = 0
+    pokeCounter = 0
     let solvedBoard = newSolvedBoard()  // Generate a new populated board
   
     // Clone the populated board and poke holes in it. Stored the removed values for clues
@@ -155,7 +161,19 @@ function newStartingBoard  (holes) {
   } catch (error) {
       // console.log(`Stopped after: ${(new Date - startTime)} milliseconds`)
       console.log(error)
+      errorCount ++
+      if (errorCount === 5) throw new Error('Too many errors')
     return newStartingBoard(holes)
+  }
+}
+
+function newGame(holes) {
+  errorCount = 0
+  try {
+    return newStartingBoard(holes)
+  } catch (error) {
+    console.log(error)
+    console.log("💩")
   }
 }
 
@@ -182,12 +200,27 @@ function multiplePossibleSolutions (boardToCheck) {
   return false
 }
 
+  function eachSlice(string, length) {
+    const newArray = []
+  
+    for (let index = 0; index < length; index++) {
+      const startIndex = index*length
+      const endIndex = startIndex + length
+      const fragment = string.split(',').slice( startIndex, endIndex )
+      newArray.push( fragment.map( cell => parseInt(cell) ) )
+    }
+    return newArray
+  }
+
+
 // This will attempt to solve the puzzle by placing values into the board in the order that
 // the empty cells list presents
 function fillFromArray(startingBoard, emptyCellArray) {
   const emptyCell = nextStillEmptyCell(startingBoard, emptyCellArray)
   if (!emptyCell) return startingBoard
   for (num of shuffle(numArray) ) {   
+    pokeCounter++
+    if ( pokeCounter > 60_000_000 ) throw new Error ("Poke Timeout")
     if ( safeToPlace( startingBoard, emptyCell, num) ) {
       startingBoard[ emptyCell.rowIndex ][ emptyCell.colIndex ] = num 
       if ( fillFromArray(startingBoard, emptyCellArray) ) return startingBoard 
