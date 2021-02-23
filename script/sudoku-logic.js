@@ -160,7 +160,7 @@ function newStartingBoard  (holes) {
     return [removedVals, startingBoard, solvedBoard]
   } catch (error) {
       // console.log(`Stopped after: ${(new Date - startTime)} milliseconds`)
-      console.log(error)
+      // console.log(error)
       errorCount ++
       if (errorCount === 5) throw new Error('Too many errors')
     return newStartingBoard(holes)

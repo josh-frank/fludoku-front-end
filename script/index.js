@@ -75,7 +75,7 @@ function patchUserBoard( userBoardID, userBoardConfig ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 let currentUserId = 1;
-
+let logInSubmitted = false
 let removedValues = [];
 let startingBoard = [];
 let boardInProgress = []
@@ -406,6 +406,8 @@ function renderLogin () {
 
 function logUserIn (formSubmitEvent) {
     formSubmitEvent.preventDefault()
+    if (logInSubmitted) return
+    logInSubmitted=true
     const usersName = formSubmitEvent.target.name.value
     fetchUserInfoByName( usersName ).then( userData => {
         formSubmitEvent.target.reset()
@@ -505,6 +507,9 @@ function handleFormSubmit ( formSubmitEvent ) {
     switch ( true ) {
         case ( formSubmitEvent.target.id === "login-form"):
             logUserIn(formSubmitEvent)
+            setTimeout( () => {
+                logInSubmitted = false
+            }, 1000)
             break
         case ( formSubmitEvent.target.id === 'new-game-form'):
             formSubmitEvent.preventDefault()
