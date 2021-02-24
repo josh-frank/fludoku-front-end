@@ -332,6 +332,21 @@ content {
     margin: 10px;
 }
 
+#abort-button{
+    border-radius: 10px;
+    background: rgb(170, 55, 55);
+    color: white;
+    font-size: large;
+    margin: 10px;
+    border: 1px solid red;
+    outline: none;
+}
+#abort-button:hover{
+    background: white;
+    color: black;
+    outline: 1px black;
+}
+
 button:hover, #game-controls button:hover {
     background: white;
     color: black;
@@ -379,3 +394,87 @@ nav button {
     outline: none;
     font-size: large;
 }
+
+/******************** Loading Window  ************************/
+
+#loading-div{
+    margin-top: 50px;
+    display: none;
+    position: absolute;
+    height: 275px;
+    width: 450px;
+    background: #1d1f20;
+    z-index: 2000;
+    border-radius: 10px;
+    box-shadow: 0 0 2px 2px black;
+    border: 1px solid #000;
+    color: white;
+}
+
+#loading-failed{
+    display: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    /* height: 375px;
+    width: 450px; */
+    background: #1d1f20;
+    color: rgb(250, 115, 115);
+    z-index: 2000;
+    border-radius: 10px;
+    box-shadow: 0 0 2px 2px black;
+    border: 1px solid #000;
+    text-align: center;
+}
+
+#loading-failed h2{
+    color: rgb(228, 53, 53);
+}
+
+#loading-animation {
+    display: none;
+    text-align: center;
+}
+
+/*Animation from https://codepen.io/johano/pen/wkclF */
+    .loader {
+        margin-top: 50px;
+        width: 100px;
+        height: 100px;
+        display: inline-table;
+        box-sizing: border-box;
+        position: relative;
+        border-spacing: 0.3em;
+    }
+    .loader row {
+        display: table-row;
+    }
+    .loader row span {
+        display: table-cell;
+        position: relative;
+        background: #fdfdfd;
+        opacity: 0;
+        -webkit-animation: flicker 0.5985999999999999s ease-out infinite alternate;
+    }
+    
+    @-webkit-keyframes flicker {
+        from, 20% {
+        opacity: 0;
+        }
+        100%, to {
+        opacity: 1;
+        }
+    }
+    
+    .loader row:nth-child(1) span:nth-child(1) { -webkit-animation-delay: .50s; }
+    .loader row:nth-child(1) span:nth-child(2) { -webkit-animation-delay: .70s; }
+    .loader row:nth-child(1) span:nth-child(3) { -webkit-animation-delay: .60s; }
+    .loader row:nth-child(2) span:nth-child(1) { -webkit-animation-delay: .20s; }
+    .loader row:nth-child(2) span:nth-child(2) { -webkit-animation-delay: .80s; }
+    .loader row:nth-child(2) span:nth-child(3) { -webkit-animation-delay: .90s; }
+    .loader row:nth-child(3) span:nth-child(1) { -webkit-animation-delay: .10s; }
+    .loader row:nth-child(3) span:nth-child(2) { -webkit-animation-delay: .30s; }
+    .loader row:nth-child(3) span:nth-child(3) { -webkit-animation-delay: .40s; }
+    
+  
+  
