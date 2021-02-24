@@ -10,6 +10,19 @@ const BLANK_BOARD = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
+//For Testing Multiple Possible Solutions
+const MULTIPLE_SOLUTION = [
+  [0,1,7,5,6,0,0,0,8],
+  [0,5,0,0,0,1,3,0,7],
+  [0,9,2,0,0,0,6,0,1],
+  [0,7,0,2,3,0,8,4,0],
+  [4,3,0,6,1,0,0,7,9],
+  [0,6,8,0,0,7,0,3,0],
+  [7,0,0,1,5,0,9,8,4],
+  [0,0,1,7,0,3,5,0,0],
+  [0,0,6,0,2,0,7,0,0]
+]
+
 // let startTime 
 let counter
 let pokeCounter
@@ -162,7 +175,7 @@ function newStartingBoard  (holes) {
       // console.log(`Stopped after: ${(new Date - startTime)} milliseconds`)
       // console.log(error)
       errorCount ++
-      if (errorCount === 5) throw new Error('Too many errors')
+      if (errorCount === 4) throw new Error('Too many errors')
     return newStartingBoard(holes)
   }
 }
@@ -243,6 +256,12 @@ function nextStillEmptyCell (startingBoard, emptyCellArray) {
     if (startingBoard[ coords.row ][ coords.col ] === 0) return {rowIndex: coords.row, colIndex: coords.col}
   }
   return false
+}
+
+// Generate array from range, inclusive of start & endbounds.
+const range = (start, end) => {
+  const length = end - start + 1
+  return Array.from( {length} , ( _ , i) => start + i)
 }
 
 // Get a list of all empty cells in the board from top-left to bottom-right

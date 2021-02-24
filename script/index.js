@@ -443,7 +443,7 @@ function renderUserBoards (userData) {
     newGameDifficulty.type = 'range'
     newGameDifficulty.name = "difficulty"
     newGameDifficulty.min = 10
-    newGameDifficulty.max = 58
+    newGameDifficulty.max = 57
     newGameDifficulty.value = 40
     
     const newGameDifficultyValue = document.createElement('span')
