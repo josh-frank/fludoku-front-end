@@ -11,6 +11,34 @@
 
     <body>
         <overlay id="modal-background">
+            <div id="loading-div" >
+                <div id="loading-animation" >
+                    <h1>Generating Game...</h1>
+                    <div class="loader">
+                        <row>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </row>
+                        <row>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </row>
+                        <row>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </row>
+                    </div>
+                </div>
+                <div id='loading-failed'>
+                    <h2>This is taking a while</h2>
+                    <p>Please Try Again</p>
+                    <p>Reducing the number of holes will speed up game generation</p>
+                    <button id="abort-button">Cancel</button>
+                </div>
+            </div>
             <section id ="modal-container"></section>
         </overlay>
         
