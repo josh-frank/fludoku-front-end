@@ -229,7 +229,7 @@ function multiplePossibleSolutions (boardToCheck) {
   //     newArray.push( fragment.map( cell => parseInt(cell) ) )
   //   }
   //   return newArray
-  // }
+  // } 
 
 
 // This will attempt to solve the puzzle by placing values into the board in the order that
