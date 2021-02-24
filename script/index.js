@@ -19,7 +19,7 @@ function peers( puzzle, row, column ) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const boardUrl = "https://fludoku.herokuapp.com/boards"
+const boardUrl = "https://fludoku.herokuapp.com/boards" 
 const userBoardUrl = "https://fludoku.herokuapp.com/user_boards"
 const userUrl = "https://fludoku.herokuapp.com/users"
 const loginUrl = "https://fludoku.herokuapp.com/login"
