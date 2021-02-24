@@ -32,7 +32,7 @@ function fetchUserInfoByName(usersName) {
 function fetchUserInfoById( userId ) {
     return fetch( `${ userUrl }/${ userId }` )
     .then( response => response.json() );
-}
+} 
 
 function patchUser( userId, patchUserConfig ) {
     return fetch( `${ userUrl }/${ userId }`, patchUserConfig )
